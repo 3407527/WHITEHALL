@@ -647,7 +647,7 @@ int main(int argc, char ** argv)
 	    case 'N':
 	      sscanf(gbuffer, "%c %d", &com, &tour);
 	      break;
-	    case 'K':
+	    case 'M':
 	      sscanf(gbuffer, "%c %d", &com, &victimes[nbvictimes]);
 	      nbvictimes++;
 	      break;

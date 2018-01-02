@@ -240,8 +240,10 @@ int main(int argc, char *argv[])
 		ind_k = indice;
 		feuille_route_jack[0] = ind_k;
 		//sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"T Pointdedépartvalide");
-		sprintf(reply,"K %d",ind_k);
+		sprintf(reply,"M %d",ind_k);
 		broadcastMessage(reply);
+		sprintf(reply,"K %d",ind_k);
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port, reply);
 		cibles_restantes = 3;
 		broadcastMessage("N 1");
 		nbTour++;
@@ -258,6 +260,8 @@ int main(int argc, char *argv[])
 	      if (mouvementAutorise_Jack(indice)){
 		ind_k = indice;
 		feuille_route_jack[nbTour] = ind_k;
+		sprintf(reply,"K %d",ind_k);
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port, reply);
 		broadcastMessage("T Le policier Jaune se déplace.");
 		fsmServer = 7;
 	      }
@@ -272,6 +276,8 @@ int main(int argc, char *argv[])
 	      sscanf(buffer, "%c %d", &tmp, &indice);
 	      if (est_present(carresJaunes, indice, 6)){
 		ind_j = indice;
+		sprintf(reply,"J %d",ind_j);
+		broadcastMessage(reply);
 		broadcastMessage("T Le policier Vert choisit son point de départ");
 		//sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"T messageprisencompte\n");
 		fsmServer = 3;
@@ -284,6 +290,8 @@ int main(int argc, char *argv[])
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if (mouvementAutorise_Police(indice, 1)){
 	      ind_j = indice;
+	      sprintf(reply,"J %d",ind_j);
+	      broadcastMessage(reply);
 	      broadcastMessage("T Le policier Vert se déplace.");
 	      fsmServer = 8;
 	    }
@@ -298,6 +306,8 @@ int main(int argc, char *argv[])
 	      sscanf(buffer, "%c %d", &tmp, &indice);
 	      if ((indice != ind_j) && (est_present(carresJaunes, indice, 6))){
 		ind_v = indice;
+		sprintf(reply,"V %d",ind_v);
+		broadcastMessage(reply);
 		broadcastMessage("T Le policier Bleu choisit son point de départ");	      
 		fsmServer = 4;
 	      }
@@ -309,6 +319,8 @@ int main(int argc, char *argv[])
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if (mouvementAutorise_Police(indice, 2)){
 	      ind_v = indice;
+	      sprintf(reply,"V %d",ind_v);
+	      broadcastMessage(reply);
 	      broadcastMessage("T Le policier Bleu se déplace.");
 	      fsmServer = 9;
 	    }
@@ -321,8 +333,10 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 4)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      if (est_present(carresJaunes, indice, 6)){
+	      if ((indice != ind_j) && (indice != ind_v) && (est_present(carresJaunes, indice, 6))){
 		ind_b = indice;
+		sprintf(reply,"B %d",ind_b);
+		broadcastMessage(reply);
 		broadcastMessage("T Jack choisit son point de départ");	      
 		fsmServer = 5;
 	      }
@@ -334,6 +348,8 @@ int main(int argc, char *argv[])
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if (mouvementAutorise_Police(indice, 3)){
 	      ind_b = indice;
+	      sprintf(reply,"B %d",ind_b);
+	      broadcastMessage(reply);
 	      broadcastMessage("T Le policier Jaune effectue une action.");
 	      fsmServer = 10;
 	    }
