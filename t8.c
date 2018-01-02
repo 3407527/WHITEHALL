@@ -19,6 +19,10 @@ char gName[256];
 int gId;
 char joueur = 'U';
 char couleur;
+int ind_k = -1;
+int ind_j = -1;
+int ind_v = -1;
+int ind_b = -1;
 struct _poi
 {
 	int x;
@@ -643,6 +647,18 @@ int main(int argc, char ** argv)
 	    case 'C':
 	      sscanf(gbuffer,"%c %d %d",&com, &px, &py);
 	      //printf("COM=%c (%d,%d)\n",com,px,py);
+	      break;
+	    case 'K':
+	      sscanf(gbuffer, "%c %d", &com, &ind_k);
+	      break;
+	    case 'J':
+	      sscanf(gbuffer, "%c %d", &com, &ind_j);
+	      break;
+	    case 'V':
+	      sscanf(gbuffer, "%c %d", &com, &ind_v);
+	      break;
+	    case 'B':
+	      sscanf(gbuffer, "%c %d", &com, &ind_b);
 	      break;
 	    case 'N':
 	      sscanf(gbuffer, "%c %d", &com, &tour);
