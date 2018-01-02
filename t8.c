@@ -29,7 +29,9 @@ int indice;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int NW[35] = {1,2,3,9,11,12,14,16,17,18,8,10,13,15,28,29,32,33,34,35,36,30,31,54,48,49,51,53,55,72,71,52,69,68,50};
+int nbvictimes;
+int victimes[4];
+
 
 void initPOI()
 {
@@ -517,6 +519,7 @@ int main(int argc, char ** argv)
   char com;
   int px,py;
   char mess[256];
+  int tour = 0;
   
   if (argc<6)
     {
@@ -577,6 +580,10 @@ int main(int argc, char ** argv)
 	    	case SDLK_p:
 	    	  fputs("P ", f);
 	    	  break;
+		case SDLK_u:
+		  sprintf(mess, "%c 230", joueur);
+		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
+		  break;
 	    	case SDLK_a:
 	    	  fputs("A ", f);
 	    	  break;
@@ -628,14 +635,21 @@ int main(int argc, char ** argv)
       
       if (synchro==1)
 	{
-	  puts("consomme");
+	  //puts("consomme");
 	  pthread_mutex_lock( &mutex );
 	  
 	  switch (gbuffer[0])
 	    {
 	    case 'C':
 	      sscanf(gbuffer,"%c %d %d",&com, &px, &py);
-	      printf("COM=%c (%d,%d)\n",com,px,py);
+	      //printf("COM=%c (%d,%d)\n",com,px,py);
+	      break;
+	    case 'N':
+	      sscanf(gbuffer, "%c %d", &com, &tour);
+	      break;
+	    case 'K':
+	      sscanf(gbuffer, "%c %d", &com, &victimes[nbvictimes]);
+	      nbvictimes++;
 	      break;
 	    case 'I':
 	      sscanf(gbuffer,"%c %d",&com, &gId);
@@ -658,7 +672,7 @@ int main(int argc, char ** argv)
 	      break;
 	    case 'T':
 	      sscanf(gbuffer,"%c %s",&com, mess);
-	      printf("COM=%c mess=%s\n",com,mess);
+	      //printf("COM=%c mess=%s\n",com,mess);
 	      break;
 	    default:
 	      break;
