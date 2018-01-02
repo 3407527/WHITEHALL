@@ -31,8 +31,6 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int NW[35] = {1,2,3,9,11,12,14,16,17,18,8,10,13,15,28,29,32,33,34,35,36,30,31,54,48,49,51,53,55,72,71,52,69,68,50};
 
-int 
-
 void initPOI()
 {
   poi[1].x=74 ; poi[1].y=55 ;

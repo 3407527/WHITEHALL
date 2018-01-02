@@ -18,13 +18,17 @@ int nbClients;
 int fsmServer;
 int nbPts;
 int ptKill[4];
+int carresJaunes[6] = {230,230,230,230,230,230}; // A MODIFIER UNE FOIS LES CLICS FAITS
 int nbTour;
+int cibles_restantes = 4;
 int indice;
 int ind_j;
 int ind_v;
 int ind_b;
 int ind_k;
 int l;
+int quartiers[190] = {5,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,1,1,1,1,1,1,1,1,1,5,5,5,5,5,2,2,2,2,2,2,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,2,2,2,1,1,5,1,1,5,5,5,5,2,2,2,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,5,3,3,3,3,3,5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,3,5,5,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,5,5,5,4,4,4,4,4,4,4,4,3,3,3,3,3,3,5,5,5,5,4,4,4,4,4,4,3}; // la case d'indice i : 1 => NO, 2 => NE, 3 => SO, 4 => SE, 5 => case noire
+char cibles_quartier[4]; // permettra de vérifier que les quatres cibles sont de quartiers différents
 
 void printClients()
 {
@@ -94,6 +98,26 @@ void broadcastMessage(char *mess)
 			mess);
 }
 
+
+void broadcastPolice(char *mess)
+{
+  int i;
+
+  for (i=1;i<nbClients;i++)
+    sendMessageToClient(tcpClients[i].ipAddress, 
+			tcpClients[i].port,
+			mess);
+}
+
+int est_present(int tab[], int e, int taille){
+  int i;
+  for (i = 0; i < taille; i++){
+    if (tab[i] == e)
+      return 1;
+  }
+  return 0;
+}
+
 int main(int argc, char *argv[])
 {
   int sockfd, newsockfd, portno;
@@ -107,13 +131,8 @@ int main(int argc, char *argv[])
   int id;
   char tmp;
   
-
-  int quartiers[190] = {5,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,1,1,1,1,1,1,1,1,1,5,5,5,5,5,2,2,2,2,2,2,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,2,2,2,1,1,5,1,1,5,5,5,5,2,2,2,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,5,3,5,3,3,3,5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,3,5,5,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,5,5,5,4,4,4,4,4,4,4,4,3,3,3,3,3,3,5,5,5,5,4,4,4,4,4,4,3}; // la case d'indice i : 1 => NO, 2 => NE, 3 => SO, 4 => SE, 5 => case noire
-  char cibles_quartier[4]; // permettra de vérifier que les quatres cibles sont de quartiers différents
-  
   struct sockaddr_in serv_addr, cli_addr;
   int n;
-
 
   nbClients=0;
   fsmServer=0;
@@ -177,9 +196,10 @@ int main(int argc, char *argv[])
 				  tcpClients[id].port,
 				  reply);	
 
-	      broadcastMessage("T messagesent");
-	      if (nbClients==4)
+	      if (nbClients==4){
+		broadcastMessage("T Jack choisit quatre cibles");
 		fsmServer=1;
+	      }
 	    }
 	  break;
 	case 'K':
@@ -187,25 +207,36 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 1)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      if ((quartiers[indice] != 5) && (cibles_quartier[quartiers[indice] - 1] == 0){
+	      printf("%d %d\n", quartiers[indice], cibles_quartier[quartiers[indice] - 1]);
+	      if ((indice <= 189) && (quartiers[indice] != 5) && (cibles_quartier[quartiers[indice] - 1] == 0)){
 		  ptKill[nbPts++] = indice;
-		  cibles_quartier[quartiers[indice]] = 1;
+		  cibles_quartier[quartiers[indice] - 1] = 1;
+		  printf("%d %d %d %d\n", ptKill[0], ptKill[1], ptKill[2], ptKill[3]);
 		}
-	      id=findClientByName(clientName);
-	      sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port,"T messageprisencompte\n");
-	      if(nbPts == 4) 
+	      else
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez séléctionner une clible valide.");
+	      //sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"T messageprisencompte\n");
+	      if(nbPts == 4) {
+		broadcastMessage("T Le policier Jaune choisit son point de départ");
 		fsmServer = 2;
+	      }
 	    }
 
 	  //fsmServer = 5 : Placement de Jack 
 	  if(fsmServer == 5)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      ind_k = indice;
-	      id=findClientByName(clientName);
-	      sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port,"T messageprisencompte\n");
-	      if(nbPts == 4) 
+	      if ((indice <= 190) && ((indice == ptKill[0]) || (indice == ptKill[1]) || (indice == ptKill[2]) || (indice == ptKill[3]))){
+		ind_k = indice;
+		//sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"T Pointdedépartvalide");
+		sprintf(reply,"K %d",ind_k);
+		broadcastMessage(reply);
+		cibles_restantes = 3;
+		broadcastMessage("T Jack se déplace.");
 		fsmServer = 6;
+	      }
+	      else
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez séléctionner une des cibles.");
 	    }
 	  break;
 	case 'J':
@@ -213,10 +244,14 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 2)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      ind_j = indice;
-	      id=findClientByName(clientName);
-	      sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port,"T messageprisencompte\n");
-	      fsmServer = 3;
+	      if (est_present(carresJaunes, indice, 6)){
+		ind_j = indice;
+		broadcastMessage("T Le policier Vert choisit son point de départ");
+		//sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"T messageprisencompte\n");
+		fsmServer = 3;
+	      }
+	      else
+		sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
 	    }
 	  break;
 	case 'V':
@@ -224,10 +259,13 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 3)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      ind_v = indice;
-	      id=findClientByName(clientName);
-	      sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port,"T messageprisencompte\n");
-	      fsmServer = 4;
+	      if (est_present(carresJaunes, indice, 6)){
+		ind_v = indice;
+		broadcastMessage("T Le policier Bleu choisit son point de départ");	      
+		fsmServer = 4;
+	      }
+	      else
+		sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
 	    }
 	  break;
 	case 'B':
@@ -235,10 +273,13 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 4)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      ind_b = indice;
- 	      id=findClientByName(clientName);
-	      sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port,"T messageprisencompte\n");
-	      fsmServer = 5;
+	      if (est_present(carresJaunes, indice, 6)){
+		ind_b = indice;
+		broadcastMessage("T Jack choisit son point de départ");	      
+		fsmServer = 5;
+	      }
+	      else
+		sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
 	    }
 	  break;
 	default:
