@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include "liaisons.h"
 
 struct _client
 {
@@ -139,9 +140,11 @@ int main(int argc, char *argv[])
   int clientPort;
   int id;
   char tmp;
+  char joueur;
   
   struct sockaddr_in serv_addr, cli_addr;
   int n;
+  int i; //boucles
 
   nbClients=0;
   fsmServer=0;
@@ -150,6 +153,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"ERROR, no port provided\n");
     exit(1);
   }
+  
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) 
     error("ERROR opening socket");
@@ -298,6 +302,24 @@ int main(int argc, char *argv[])
 	    else
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
+	  //fsmServer = 12 : Jaune effectue une arrestation
+	  if (fsmServer = 12){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_j - 200], indice, 7))){
+	      if (indice != ind_k){
+		sprintf(reply, "T Jack n'est pas en %d.", indice);
+		broadcastMessage(reply);
+		broadcastMessage("T Le policier Vert choisit une action à effectuer.");
+		fsmServer = 13;
+		  }
+	      else{
+		sprintf(reply, "T Jack a été arrêté par le policier Jaune en %d! Fin de la partie !", indice);
+		fsmServer = 19;
+	      }
+	    }
+	    else
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	  } 
 	  break;
 	case 'V':
 	  //fsmServer = 3 : Placement de policier vert
@@ -327,6 +349,24 @@ int main(int argc, char *argv[])
 	    else
 	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
 	  }
+	  //fsmServer = 15 : Vert effectue une arrestation
+	  if (fsmServer = 15){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_v - 200], indice, 7))){
+	      if (indice != ind_k){
+		sprintf(reply, "T Jack n'est pas en %d.", indice);
+		broadcastMessage(reply);
+		broadcastMessage("T Le policier Bleu choisit une action à effectuer.");
+		fsmServer = 16;
+		  }
+	      else{
+		sprintf(reply, "T Jack a été arrêté par le policier Vert en %d! Fin de la partie !", indice);
+		fsmServer = 19;
+	      }
+	    }
+	    else
+	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
+	  } 
 	  break;
 	case 'B':
 	  //fsmServer = 4 : Placement de policier bleu
@@ -350,11 +390,94 @@ int main(int argc, char *argv[])
 	      ind_b = indice;
 	      sprintf(reply,"B %d",ind_b);
 	      broadcastMessage(reply);
-	      broadcastMessage("T Le policier Jaune effectue une action.");
+	      broadcastMessage("T Le policier Jaune choisit une action à effectuer.");
 	      fsmServer = 10;
 	    }
 	    else
 	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
+	  }
+	  //fsmServer = 18 : Bleu effectue une arrestation
+	  if (fsmServer = 18){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_b - 200], indice, 7))){ // si l'indice est valide
+	      if (indice != ind_k){ // si pas d'arrestation
+		sprintf(reply, "T Jack n'est pas en %d.", indice);
+		broadcastMessage(reply);
+		if (est_present(ptKill, ind_k, 4)){ // si meurtre
+		  sprintf(reply, "M %d", ind_k);
+		  broadcastMessage(reply);
+		  cibles_restantes--;
+		  if(cibles_restantes == 0){ // si dernière cible
+		    broadcastMessage("T Jack a gagné! Fin de la partie!");
+		    fsmServer=19;
+		  }
+		  else { // sinon on commence un nouveau round
+		    nbTour = 1;
+		    broadcastMessage("N 1");
+		    feuille_route_jack[0] = ind_k;
+		    for (i = 1; i < 17; i++)
+		      feuille_route_jack[i] = 0;
+		    broadcastMessage("T Jack se déplace.");
+		    fsmServer= 6;
+		  }
+		}
+		else{ // si pas de meurtre
+		  if (nbTour == 15){ // si dernier tour
+		    broadcastMessage("T Jack n'a pas éliminé une cible à temps! Les policiers ont gagné!");
+		    fsmServer = 19;
+		  }
+		  else { // sinon on continue normalement
+		    nbTour++;
+		    sprintf(reply, "N %d", nbTour);
+		    broadcastMessage(reply);
+		    broadcastMessage("T Jack se déplace.");
+		    fsmServer = 6;
+		  }
+		}	    
+	      }
+	      else{ // sinon Jack est arrêté
+		sprintf(reply, "T Jack a été arrêté par le policier Bleu en %d! Fin de la partie !", indice);
+		broadcastMessage(reply);
+		fsmServer = 19;
+	      }
+	    }
+	    else // sinon la case n'est pas valide
+	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
+	  }
+	  break;
+	case 'L':
+	  sscanf(buffer, "%c %c", &tmp, &joueur);
+	  // fsmServer = 10 : Le policier jaune choisit une action : Clues and Suspicion
+	  if ((fsmServer == 10) && (joueur = 'J')){
+	    broadcastMessage("T Le policier Jaune cherche des indices.");
+	    fsmServer = 11;
+	  }
+	  // fsmServer = 13 : Le policier vert choisit une action : Clues and Suspicion
+	  if ((fsmServer == 13) && (joueur = 'V')){
+	    broadcastMessage("T Le policier Vert cherche des indices.");
+	    fsmServer = 14;
+	  }
+	  // fsmServer = 16 : Le policier bleu choisit une action : Clues and Suspicion
+	  if ((fsmServer == 16) && (joueur = 'B')){
+	    broadcastMessage("T Le policier Bleu cherche des indices.");
+	    fsmServer = 17;
+	  }
+	  break;
+	case 'A':
+	  sscanf(buffer, "%c %c", &tmp, &joueur);
+	  // fsmServer = 10 : Le policier jaune choisit une action : Clues and Suspicion
+	  if ((fsmServer == 10) && (joueur = 'J')){
+	    broadcastMessage("T Le policier Jaune effectue une arrestation.");
+	    fsmServer = 12;
+	  }
+	  if ((fsmServer == 13) && (joueur = 'V')){
+	    broadcastMessage("T Le policier Vert effectue une arrestation.");
+	    fsmServer = 15;
+	  }
+	  // fsmServer = 16 : Le policier bleu choisit une action : Clues and Suspicion
+	  if ((fsmServer == 16) && (joueur = 'B')){
+	    broadcastMessage("T Le policier Bleu effectue une arrestation.");
+	    fsmServer = 18;
 	  }
 	  break;
 	default:

@@ -584,12 +584,17 @@ int main(int argc, char ** argv)
 	    	case SDLK_p:
 	    	  fputs("P ", f);
 	    	  break;
-		case SDLK_u:
+		case SDLK_u: // à supprimer une fois les carrés bien positionnées
 		  sprintf(mess, "%c 230", joueur);
 		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
 		  break;
-	    	case SDLK_a:
-	    	  fputs("A ", f);
+		case SDLK_l: // à supprimer une fois le bouton fait
+		  sprintf(mess, "L %c", joueur);
+		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
+	    	case SDLK_a: // pareil que l
+	    	  //fputs("A ", f);
+		  sprintf(mess, "A %c", joueur);
+		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
 	    	  break;
 	    	case SDLK_b:
 	    	  fputs("B ", f);
