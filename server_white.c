@@ -28,7 +28,7 @@ int ind_j;
 int ind_v;
 int ind_b;
 int ind_k;
-int l;
+
 int quartiers[190] = {5,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,1,1,1,1,1,1,1,1,1,5,5,5,5,5,2,2,2,2,2,2,1,1,1,1,1,1,1,1,5,5,5,5,2,2,2,2,2,2,2,2,1,1,5,1,1,5,5,5,5,2,2,2,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,5,3,3,3,3,3,5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,3,5,5,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,5,5,5,4,4,4,4,4,4,4,4,3,3,3,3,3,3,5,5,5,5,4,4,4,4,4,4,3}; // la case d'indice i : 1 => NO, 2 => NE, 3 => SO, 4 => SE, 5 => case noire
 char cibles_quartier[4]; // permettra de vérifier que les quatres cibles sont de quartiers différents
 
@@ -128,6 +128,50 @@ int mouvementAutorise_Police(int indice, int joueur){
   return 1;
 }
 
+int traceJack(int indice){
+  int i;
+  for (i = 0; i < nbTour + 1; i++)
+    if (feuille_route_jack[i] == indice)
+      return indice;
+  return 0;
+}
+
+void fin_de_tour(){
+  int i;
+  char reply[256];
+  if (est_present(ptKill, ind_k, 4)){ // si meurtre
+    sprintf(reply, "M %d", ind_k);
+    broadcastMessage(reply);
+    cibles_restantes--;
+    if(cibles_restantes == 0){ // si dernière cible
+      broadcastMessage("T Jack a gagné! Fin de la partie!");
+      fsmServer=19;
+    }
+    else { // sinon on commence un nouveau round
+      nbTour = 1;
+      broadcastMessage("N 1");
+      feuille_route_jack[0] = ind_k;
+      for (i = 1; i < 17; i++)
+	feuille_route_jack[i] = 0;
+      broadcastMessage("T Jack se déplace.");
+      fsmServer= 6;
+    }
+  }
+  else{ // si pas de meurtre
+    if (nbTour == 15){ // si dernier tour
+      broadcastMessage("T Jack n'a pas éliminé une cible à temps! Les policiers ont gagné!");
+      fsmServer = 19;
+    }
+    else { // sinon on continue normalement
+      nbTour++;
+      sprintf(reply, "N %d", nbTour);
+      broadcastMessage(reply);
+      broadcastMessage("T Jack se déplace.");
+      fsmServer = 6;
+    }
+  }
+}
+
 int main(int argc, char *argv[])
 {
   int sockfd, newsockfd, portno;
@@ -141,10 +185,28 @@ int main(int argc, char *argv[])
   int id;
   char tmp;
   char joueur;
+
+  
+  // tableaux pour représenter les ronds voisins de chaque policer, et un tableau contenant les tests de la présence de preuve a l indice correspondant, et leur longueur
+  int *vj = (int *) malloc (sizeof(int));
+  int *vjt = (int *) malloc (sizeof(int));
+  int *vv = (int *) malloc (sizeof(int));
+  int *vvt = (int *) malloc (sizeof(int));
+  int *vb = (int *) malloc (sizeof(int));
+  int *vbt = (int *) malloc (sizeof(int));
+  int lj;
+  int lv;
+  int lb;
+  int nbtj;
+  int nbtv;
+  int nbtb;
+
+  int *tmp_alloc;
   
   struct sockaddr_in serv_addr, cli_addr;
   int n;
   int i; //boucles
+  int trace = 0;
 
   nbClients=0;
   fsmServer=0;
@@ -296,8 +358,56 @@ int main(int argc, char *argv[])
 	      ind_j = indice;
 	      sprintf(reply,"J %d",ind_j);
 	      broadcastMessage(reply);
+	      lj = 0;
+	      nbtj = 0;
+	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
+		if (liaisons[ind_j-200][i] <= 189)
+		  lj++;
+	      tmp_alloc = realloc(vj, lj);
+	      vj = tmp_alloc;
+	      tmp_alloc = realloc(vjt,lj);
+	      vjt = tmp_alloc;
+	      lj = 0;
+	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
+		if (liaisons[ind_j-200][i] <= 189){ 
+		  vj[lj] = liaisons[ind_j-200][i];
+		  vjt[lj] = 0;
+		  lj++;
+		}	      
 	      broadcastMessage("T Le policier Vert se déplace.");
 	      fsmServer = 8;
+	    }
+	    else
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	  }
+	  //fsmServer = 11 : Jaune recherche des indices
+	  if (fsmServer = 11){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_j - 200], indice, 7))){
+	      trace = traceJack(indice);
+	      if (trace){
+		sprintf(reply, "S %d", trace);
+		broadcastMessage(reply);
+		broadcastMessage("Le policier Vert choisit une action à effectuer");
+		fsmServer = 13;
+	      }
+	      // A COMPLETER : Si pas de trace alors...
+	      else {
+		for (i = 0; i < lj; i++) // on cherche la position de indice dans le tableau des voisins
+		  if (vj[i] == indice){
+		    break;
+		  }
+		if (vjt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Cette case a déjà été vérifiée.");
+		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		  vjt[i] = 1;
+		  nbtj++;
+		  if (nbtj == lj){
+		    broadcastMessage("Le policier Vert choisit une action à effectuer");
+		    fsmServer = 13;
+		  }
+		}
+	      }		
 	    }
 	    else
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
@@ -314,6 +424,7 @@ int main(int argc, char *argv[])
 		  }
 	      else{
 		sprintf(reply, "T Jack a été arrêté par le policier Jaune en %d! Fin de la partie !", indice);
+		broadcastMessage(reply);
 		fsmServer = 19;
 	      }
 	    }
@@ -343,11 +454,59 @@ int main(int argc, char *argv[])
 	      ind_v = indice;
 	      sprintf(reply,"V %d",ind_v);
 	      broadcastMessage(reply);
+	      lv = 0;
+	      nbtv = 0;
+	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
+		if (liaisons[ind_v-200][i] <= 189)
+		  lv++;
+	      tmp_alloc = realloc(vv, lv);
+	      vv = tmp_alloc;
+	      tmp_alloc = realloc(vvt,lv);
+	      vvt = tmp_alloc;
+	      lv = 0;
+	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
+		if (liaisons[ind_v-200][i] <= 189){ 
+		  vv[lv] = liaisons[ind_v-200][i];
+		  vvt[lv] = 0;
+		  lv++;
+		}
 	      broadcastMessage("T Le policier Bleu se déplace.");
 	      fsmServer = 9;
 	    }
 	    else
 	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
+	  }
+	  //fsmServer = 14 : Vert recherche des indices
+	  if (fsmServer = 14){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_v - 200], indice, 7))){
+	      trace = traceJack(indice);
+	      if (trace){
+		sprintf(reply, "S %d", trace);
+		broadcastMessage(reply);
+		broadcastMessage("Le policier Bleu choisit une action à effectuer");
+		fsmServer = 16;
+	      }
+	      // A COMPLETER : Si pas de trace alors...
+	      else {
+		for (i = 0; i < lv; i++) // on cherche la position de indice dans le tableau des voisins
+		  if (vv[i] == indice){
+		    break;
+		  }
+		if (vvt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Cette case a déjà été vérifiée.");
+		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		  vvt[i] = 1;
+		  nbtv++;
+		  if (nbtv == lv){
+		    broadcastMessage("Le policier Bleu choisit une action à effectuer");
+		    fsmServer = 16;
+		  }
+		}
+	      }		
+	    }
+	    else
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 15 : Vert effectue une arrestation
 	  if (fsmServer = 15){
@@ -361,6 +520,7 @@ int main(int argc, char *argv[])
 		  }
 	      else{
 		sprintf(reply, "T Jack a été arrêté par le policier Vert en %d! Fin de la partie !", indice);
+		broadcastMessage(reply);
 		fsmServer = 19;
 	      }
 	    }
@@ -390,11 +550,59 @@ int main(int argc, char *argv[])
 	      ind_b = indice;
 	      sprintf(reply,"B %d",ind_b);
 	      broadcastMessage(reply);
+	      lb = 0;
+	      nbtb = 0;
+	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
+		if (liaisons[ind_b-200][i] <= 189)
+		  lb++;
+	      tmp_alloc = realloc(vb, lb);
+	      vb = tmp_alloc;
+	      tmp_alloc = realloc(vbt,lb);
+	      vbt = tmp_alloc;
+	      lb = 0;
+	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
+		if (liaisons[ind_b-200][i] <= 189){ 
+		  vb[lb] = liaisons[ind_b-200][i];
+		  vbt[lb] = 0;
+		  lb++;
+		}
 	      broadcastMessage("T Le policier Jaune choisit une action à effectuer.");
 	      fsmServer = 10;
 	    }
 	    else
 	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
+	  }
+	  //fsmServer = 17 : Bleu recherche des indices
+	  if (fsmServer = 17){
+	    sscanf(buffer, "%c %d", &tmp, &indice);
+	    if((indice <= 189) && (est_present(liaisons[ind_b - 200], indice, 7))){
+	      trace = traceJack(indice);
+	      if (trace){
+		sprintf(reply, "S %d", trace);
+		broadcastMessage(reply);
+		fin_de_tour();
+	      }
+	      // A COMPLETER : Si pas de trace alors...
+	      else {
+		for (i = 0; i < lb; i++) // on cherche la position de indice dans le tableau des voisins
+		  if (vb[i] == indice){
+		    break;
+		  }
+		if (vbt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Cette case a déjà été vérifiée.");
+		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		  vbt[i] = 1;
+		  nbtb++;
+		  if (nbtb == lb){
+		    fin_de_tour();
+		    //broadcastMessage("Le policier Bleu choisit une action à effectuer");
+		    //fsmServer = 16;
+		  }
+		}
+	      }		
+	    }
+	    else
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 18 : Bleu effectue une arrestation
 	  if (fsmServer = 18){
@@ -470,6 +678,7 @@ int main(int argc, char *argv[])
 	    broadcastMessage("T Le policier Jaune effectue une arrestation.");
 	    fsmServer = 12;
 	  }
+	  // fsmServer = 13 : Le policier vert choisit une action : Clues and Suspicion
 	  if ((fsmServer == 13) && (joueur = 'V')){
 	    broadcastMessage("T Le policier Vert effectue une arrestation.");
 	    fsmServer = 15;
@@ -505,5 +714,11 @@ int main(int argc, char *argv[])
     /*   close(newsockfd); */
     /* } */
   close(sockfd);
+  free(vj);
+  free(vv);
+  free(vb);
+  free(vjt);
+  free(vvt);
+  free(vbt);
   return 0; 
 }
