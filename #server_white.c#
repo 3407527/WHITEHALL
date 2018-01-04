@@ -152,11 +152,11 @@ int mouvementAutorise_Police_rec_j(int actuel, int destination, int mov){
     return 1;
   else if (mov >= 1){ // sinon, si on peut encore se déplacer
     pass[actuel] = 1;
-    for (i = 1; i <= 7; i++){
+    for (i = 1; i <= 7; i++){ // on regarde chaque liaison partant de l'indice actuel
       next = pass[liaisons[actuel][i]];
-      if ((next > 0) && (pass[next] != 1)){
-	if (next <= 189){
-	  if (mouvementAutorise_Police_rec_j(next, destination, mov)){
+      if ((next > 0) && (pass[next] != 1)){ // si existante et qu'on est pas passé par là
+	if (next <= 189){ // si c'est un rond, on ne consomme pas de mouvement
+	  if (mouvementAutorise_Police_rec_j(next, destination, mov)){ // si la destination est atteinte
 	    pass[actuel] = 0;
 	    return 1;
 	  }
