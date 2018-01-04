@@ -120,11 +120,30 @@ int est_present(int tab[], int e, int taille){
   return 0;
 }
 
-int mouvementAutorise_Jack(int indice){ // A FAIRE
-  return 1;
+int mouvementAutorise_Jack(int indice){ // OPTIMISATION POSSIBLE
+  int i,j,b;
+  int test = 0;
+  if (indice == ind_k)
+    return 0;
+  for (i = 0; i < 10; i++){
+    if ((map[i][0] == ind_k) && (map[i][1] == indice)){
+      b = 1;
+      test = 1;
+      for (j = 2; j < 5; j++){
+	if ((map[i][j] == ind_j) || (map[i][j] == ind_v) || (map[i][j] == ind_b))
+	  b = 0;
+      }
+      if (b == 1)
+	return 1;
+    }
+  }
+  if (test == 0) // le tableau a été parcouru sans succès
+    return 0;
+  else // l'indice est valide mais des policiers bloquent le chemin
+    return -1;
 }
 
-int mouvementAutorise_Police(int indice, int joueur){
+int mouvementAutorise_Police(int indice, int joueur){ // A FAIRE
   return 1;
 }
 

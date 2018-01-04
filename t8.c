@@ -35,6 +35,8 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int nbvictimes;
 int victimes[4];
+int nbindices;
+int indices[45];
 
 
 void initPOI()
@@ -524,6 +526,7 @@ int main(int argc, char ** argv)
   int px,py;
   char mess[256];
   int tour = 0;
+  int i;
   
   if (argc<6)
     {
@@ -671,6 +674,13 @@ int main(int argc, char ** argv)
 	    case 'M':
 	      sscanf(gbuffer, "%c %d", &com, &victimes[nbvictimes]);
 	      nbvictimes++;
+	      for (i = 0; i < nbindices; i++)
+		indices[i] = 0;
+	      nbindices = 0;
+	      break;
+	    case 'S':
+	      sscanf(gbuffer, "%c %d", &com, &indices[nbindices]);
+	      nbindices++;
 	      break;
 	    case 'I':
 	      sscanf(gbuffer,"%c %d",&com, &gId);
