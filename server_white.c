@@ -143,9 +143,104 @@ int mouvementAutorise_Jack(int indice){ // OPTIMISATION POSSIBLE
     return -1;
 }
 
-int mouvementAutorise_Police(int indice, int joueur){ // A FAIRE
-  return 1;
+
+int pass[533];
+
+int mouvementAutorise_Police_rec_j(int actuel, int destination, int mov){
+  int i, next;
+  if ((actuel == destination) && (actuel != ind_v) && (actuel != ind_b))
+    return 1;
+  else if (mov >= 1){
+    pass[actuel] = 1;
+    for (i = 1; i <= 7; i++){
+      next = pass[liaisons[actuel][i]];
+      if ((next > 0) && (pass[next] != 1)){
+	if (next <= 189){
+	  if (mouvementAutorise_Police_rec_j(next, destination, mov)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+	else {
+	  if (mouvementAutorise_Police_rec_j(next, destination, mov - 1)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+      }
+    }
+    pass[actuel] = 0;
+  }
+  return 0;
 }
+
+int mouvementAutorise_Police_rec_v(int actuel, int destination, int mov){
+  int i, next;
+  if ((actuel == destination) && (actuel != ind_j) && (actuel != ind_b))
+    return 1;
+  else if (mov >= 1){
+    pass[actuel] = 1;
+    for (i = 1; i <= 7; i++){
+      next = pass[liaisons[actuel][i]];
+      if ((next > 0) && (pass[next] != 1)){
+	if (next <= 189){
+	  if (mouvementAutorise_Police_rec_v(next, destination, mov)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+	else {
+	  if (mouvementAutorise_Police_rec_v(next, destination, mov - 1)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+      }
+    }
+    pass[actuel] = 0;
+  }
+  return 0;
+}
+
+int mouvementAutorise_Police_rec_b(int actuel, int destination, int mov){
+  int i, next;
+  if ((actuel == destination) && (actuel != ind_v) && (actuel != ind_j))
+    return 1;
+  else if (mov >= 1){
+    pass[actuel] = 1;
+    for (i = 1; i <= 7; i++){
+      next = pass[liaisons[actuel][i]];
+      if ((next > 0) && (pass[next] != 1)){
+	if (next <= 189){
+	  if (mouvementAutorise_Police_rec_b(next, destination, mov)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+	else {
+	  if (mouvementAutorise_Police_rec_b(next, destination, mov - 1)){
+	    pass[actuel] = 0;
+	    return 1;
+	  }
+	}
+      }
+    }
+    pass[actuel] = 0;
+  }
+  return 0;
+}
+		  
+int mouvementAutorise_Police(int destination, int joueur){ // A FAIRE
+  if (destination < 200)
+    return 0;
+  if (joueur == 1)
+    return mouvementAutorise_Police_rec_j(ind_j,destination, 2);
+  if (joueur == 2)
+    return mouvementAutorise_Police_rec_v(ind_v,destination, 2);
+  else
+    return mouvementAutorise_Police_rec_b(ind_b,destination, 2);
+}
+
 
 int traceJack(int indice){
   int i;
@@ -380,7 +475,7 @@ int main(int argc, char *argv[])
 	      lj = 0;
 	      nbtj = 0;
 	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
-		if (liaisons[ind_j-200][i] <= 189)
+		if ((liaisons[ind_j][i] <= 189) && (liaisons[ind_j][i] >= 1))
 		  lj++;
 	      tmp_alloc = realloc(vj, lj);
 	      vj = tmp_alloc;
@@ -388,8 +483,8 @@ int main(int argc, char *argv[])
 	      vjt = tmp_alloc;
 	      lj = 0;
 	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
-		if (liaisons[ind_j-200][i] <= 189){ 
-		  vj[lj] = liaisons[ind_j-200][i];
+		if ((liaisons[ind_j][i] <= 189) && (liaisons[ind_j][i] >= 1)){ 
+		  vj[lj] = liaisons[ind_j][i];
 		  vjt[lj] = 0;
 		  lj++;
 		}	      
@@ -402,7 +497,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 11 : Jaune recherche des indices
 	  if (fsmServer = 11){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_j - 200], indice, 7))){
+	    if((indice <= 189) && (est_present(liaisons[ind_j], indice, 7))){
 	      trace = traceJack(indice);
 	      if (trace){
 		sprintf(reply, "S %d", trace);
@@ -434,7 +529,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 12 : Jaune effectue une arrestation
 	  if (fsmServer = 12){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_j - 200], indice, 7))){
+	    if((indice <= 189) && (est_present(liaisons[ind_j], indice, 7))){
 	      if (indice != ind_k){
 		sprintf(reply, "T Jack n'est pas en %d.", indice);
 		broadcastMessage(reply);
@@ -476,7 +571,7 @@ int main(int argc, char *argv[])
 	      lv = 0;
 	      nbtv = 0;
 	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
-		if (liaisons[ind_v-200][i] <= 189)
+		if ((liaisons[ind_v][i] <= 189) && (liaisons[ind_v][i] >= 1))
 		  lv++;
 	      tmp_alloc = realloc(vv, lv);
 	      vv = tmp_alloc;
@@ -484,8 +579,8 @@ int main(int argc, char *argv[])
 	      vvt = tmp_alloc;
 	      lv = 0;
 	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
-		if (liaisons[ind_v-200][i] <= 189){ 
-		  vv[lv] = liaisons[ind_v-200][i];
+		if ((liaisons[ind_v][i] <= 189) && (liaisons[ind_v][i] >= 1)){ 
+		  vv[lv] = liaisons[ind_v][i];
 		  vvt[lv] = 0;
 		  lv++;
 		}
@@ -498,7 +593,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 14 : Vert recherche des indices
 	  if (fsmServer = 14){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_v - 200], indice, 7))){
+	    if((indice <= 189) && (est_present(liaisons[ind_v], indice, 7))){
 	      trace = traceJack(indice);
 	      if (trace){
 		sprintf(reply, "S %d", trace);
@@ -530,7 +625,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 15 : Vert effectue une arrestation
 	  if (fsmServer = 15){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_v - 200], indice, 7))){
+	    if((indice <= 189) && (est_present(liaisons[ind_v], indice, 7))){
 	      if (indice != ind_k){
 		sprintf(reply, "T Jack n'est pas en %d.", indice);
 		broadcastMessage(reply);
@@ -572,7 +667,7 @@ int main(int argc, char *argv[])
 	      lb = 0;
 	      nbtb = 0;
 	      for (i = 1; i <= 7; i++) // on regarde combien de cercles sont voisins
-		if (liaisons[ind_b-200][i] <= 189)
+		if ((liaisons[ind_b][i] <= 189) && (liaisons[ind_b][i] >= 1))
 		  lb++;
 	      tmp_alloc = realloc(vb, lb);
 	      vb = tmp_alloc;
@@ -580,8 +675,8 @@ int main(int argc, char *argv[])
 	      vbt = tmp_alloc;
 	      lb = 0;
 	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
-		if (liaisons[ind_b-200][i] <= 189){ 
-		  vb[lb] = liaisons[ind_b-200][i];
+		if ((liaisons[ind_b][i] <= 189) && (liaisons[ind_j][i] >= 1)){ 
+		  vb[lb] = liaisons[ind_b][i];
 		  vbt[lb] = 0;
 		  lb++;
 		}
@@ -594,7 +689,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 17 : Bleu recherche des indices
 	  if (fsmServer = 17){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_b - 200], indice, 7))){
+	    if((indice <= 189) && (est_present(liaisons[ind_b], indice, 7))){
 	      trace = traceJack(indice);
 	      if (trace){
 		sprintf(reply, "S %d", trace);
@@ -614,8 +709,6 @@ int main(int argc, char *argv[])
 		  nbtb++;
 		  if (nbtb == lb){
 		    fin_de_tour();
-		    //broadcastMessage("Le policier Bleu choisit une action à effectuer");
-		    //fsmServer = 16;
 		  }
 		}
 	      }		
@@ -626,7 +719,7 @@ int main(int argc, char *argv[])
 	  //fsmServer = 18 : Bleu effectue une arrestation
 	  if (fsmServer = 18){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
-	    if((indice <= 189) && (est_present(liaisons[ind_b - 200], indice, 7))){ // si l'indice est valide
+	    if((indice <= 189) && (est_present(liaisons[ind_b], indice, 7))){ // si l'indice est valide
 	      if (indice != ind_k){ // si pas d'arrestation
 		sprintf(reply, "T Jack n'est pas en %d.", indice);
 		broadcastMessage(reply);
