@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include "liaisons.h"
 
+
 struct _client
 {
   char ipAddress[40];

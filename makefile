@@ -1,7 +1,7 @@
 all : t7 server_white quartiers liais
 
 t7 : t8.c
-	gcc -o t7 -I/usr/include/SDL2 t8.c -lSDL2_image -lSDL2 -lpthread
+	gcc -o t7 -I/usr/include/SDL2 t8.c -lSDL2main -lSDL2_image -lSDL2 -lSDL_ttf -lfreetype -lpthread
 server_white : server_white.c
 	gcc -o server_white server_white.c
 quartiers : trad_700.c

@@ -512,7 +512,6 @@ void *server_function(void *arg)
 
 int main(int argc, char ** argv)
 {
-  FILE *f = fopen("LIAISONS", "w");
   int quit = 0;
   SDL_Event event;
   pthread_t thread1;
@@ -603,7 +602,6 @@ int main(int argc, char ** argv)
 	    case SDL_QUIT:
 	      quit = 1;
 	      pthread_cancel(thread1);
-	      fclose(f);
 	      break;
 	    case SDL_KEYDOWN:{
 	      SDL_Keycode keyPressed = event.key.keysym.sym;
