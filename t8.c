@@ -642,9 +642,8 @@ int main(int argc, char ** argv)
 		    sprintf(mess, "%c %d", joueur, indice);
 		    printf("mess vers server=%s\n",mess);
 		    sendMessageToServer(gServerIpAddress, gServerPort, mess);
-		  }		  
-		  //fprintf(f, "%d ",indice);
-		  //z--;
+		    }		  
+		  
 		}
 	      
 	      break;
