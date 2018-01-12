@@ -362,6 +362,8 @@ int main(int argc, char *argv[])
 
       printf("buffer[0]=%c\n",buffer[0]);
 
+      printf("ETAT : %d\n", fsmServer);
+
       switch (buffer[0])
 	{
 	case 'C':
@@ -461,7 +463,9 @@ int main(int argc, char *argv[])
 		broadcastMessage(reply);
 		broadcastMessage("T Le policier Vert choisit son point de départ");
 		//sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"T messageprisencompte\n");
+		printf("COUCOU JE SUIS LA\n");
 		fsmServer = 3;
+		printf("ET LA AUSSI\n");
 	      }
 	      else
 		sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
@@ -496,7 +500,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 11 : Jaune recherche des indices
-	  if (fsmServer = 11){
+	  if (fsmServer == 11){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_j], indice, 7))){
 	      trace = traceJack(indice);
@@ -528,7 +532,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 12 : Jaune effectue une arrestation
-	  if (fsmServer = 12){
+	  if (fsmServer == 12){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_j], indice, 7))){
 	      if (indice != ind_k){
@@ -592,7 +596,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 14 : Vert recherche des indices
-	  if (fsmServer = 14){
+	  if (fsmServer == 14){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_v], indice, 7))){
 	      trace = traceJack(indice);
@@ -624,7 +628,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 15 : Vert effectue une arrestation
-	  if (fsmServer = 15){
+	  if (fsmServer == 15){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_v], indice, 7))){
 	      if (indice != ind_k){
@@ -688,7 +692,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 17 : Bleu recherche des indices
-	  if (fsmServer = 17){
+	  if (fsmServer == 17){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_b], indice, 7))){
 	      trace = traceJack(indice);
@@ -718,7 +722,7 @@ int main(int argc, char *argv[])
 	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
 	  }
 	  //fsmServer = 18 : Bleu effectue une arrestation
-	  if (fsmServer = 18){
+	  if (fsmServer == 18){
 	    sscanf(buffer, "%c %d", &tmp, &indice);
 	    if((indice <= 189) && (est_present(liaisons[ind_b], indice, 7))){ // si l'indice est valide
 	      if (indice != ind_k){ // si pas d'arrestation
@@ -805,6 +809,7 @@ int main(int argc, char *argv[])
 	default:
 	  break;
 	}
+      printf("ETAT SUIVANT : %d\n", fsmServer);
     }
 
       

@@ -607,13 +607,10 @@ int main(int argc, char ** argv)
 	      SDL_Keycode keyPressed = event.key.keysym.sym;
 	      switch(keyPressed)
 	    	{
-		case SDLK_u: // à supprimer une fois les carrés bien positionnées
-		  sprintf(mess, "%c 230", joueur);
-		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
-		  break;
 		case SDLK_l: // à supprimer une fois le bouton fait
 		  sprintf(mess, "L %c", joueur);
 		  sendMessageToServer(gServerIpAddress, gServerPort, mess);
+		  break;
 	    	case SDLK_a: // pareil que l
 	    	  //fputs("A ", f);
 		  sprintf(mess, "A %c", joueur);
