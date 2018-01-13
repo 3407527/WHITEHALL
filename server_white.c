@@ -126,7 +126,7 @@ int mouvementAutorise_Jack(int indice){
   int test = 0;
   if (indice == ind_k)
     return 0;
-  for (i = 0; i < 10; i++){
+  for (i = 0; i < 1392; i++){
     if ((map[i][0] == ind_k) && (map[i][1] == indice)){
       b = 1;
       test = 1;
