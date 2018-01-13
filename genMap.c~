@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int pass[533];
+int tab[533][7];
+int res[10000][5];
+int cpt;
+
+int main(){
+  FILE *f = fopen("carres", "r");
+  char buff[50];
+  int i = 1;
+  while (fgets (buff, 50, f) != NULL ){
+    sscanf(buff, "%d %d %d %d %d %d %d", &tab[i][0],  &tab[i][1],  &tab[i][2],  &tab[i][3],  &tab[i][4],  &tab[i][5],  &tab[i][6]);
+    i++;
+  }
+  for (i = 1; i <=189){
+    pass[i] = 1;
+    res[i][0] = i;
+    PF();
+    pass[i] = 0;
+  }
+  
+  

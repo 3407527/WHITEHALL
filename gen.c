@@ -1,7 +1,7 @@
 #include <stdio.h>
-#define TAILLE 289
+#define TAILLE 448
 
-int nb[533];
+int nb[534];
 
 int main (){
   FILE *f = fopen("LIAISONS", "r");
@@ -16,7 +16,7 @@ int main (){
     tab[i][1] = b;
     i++;
   }
-  for (i = 1; i <= 532; i++){
+  for (i = 1; i <= 533; i++){
     printf("%d ", i);
     for (j = 0; j < TAILLE; j++){
       if (tab[j][0] == i){
