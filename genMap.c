@@ -47,8 +47,10 @@ int main(){
 	PF(i, tab[i][j], 0);
     pass[i] = 0;
   }
-  for (i = 0; i < cpt + 1; i++)
-    printf("%d %d %d %d %d\n", res[i][0], res[i][1], res[i][2], res[i][3], res[i][4]);
+  printf("int map[%d][5] = {", cpt);
+  for (i = 0; i < cpt; i++)
+    printf("{%d, %d, %d, %d, %d},\n", res[i][0], res[i][1], res[i][2], res[i][3], res[i][4]);
+  printf("};\n");
   return 0;
 }
   
