@@ -539,13 +539,13 @@ int main(int argc, char ** argv)
   
   SDL_Init(SDL_INIT_VIDEO);
 
-  TTF_Init();
-  TTF_Font *police = NULL;
-  SDL_Surface *texte = NULL; 
-  SDL_Color couleurNoire = {0,0,0};
-  SDL_Rect positionText;
-  positionText.x = 50;
-  positionText.y = 50;
+  //TTF_Init();
+  //TTF_Font *police = NULL;
+  //SDL_Surface *texte = NULL; 
+  // SDL_Color couleurNoire = {0,0,0};
+  //SDL_Rect positionText;
+  //positionText.x = 50;
+  //positionText.y = 50;
   //police = TTF_OpenFont("~/WHITEHALL/KIN668.TTF",8);
 
   SDL_Window * window = SDL_CreateWindow("SDL2 Displaying Image",
@@ -573,7 +573,10 @@ int main(int argc, char ** argv)
   SDL_Texture * texture_pawnB = SDL_CreateTextureFromSurface(renderer, pawnB);
   SDL_Texture * texture_rond = SDL_CreateTextureFromSurface(renderer, rond);
   SDL_SetTextureAlphaMod(texture_rond,128);
-
+  SDL_SetTextureAlphaMod(texture_pawnJ,200);
+  SDL_SetTextureAlphaMod(texture_pawnK,200);
+  SDL_SetTextureAlphaMod(texture_pawnV,200);
+  SDL_SetTextureAlphaMod(texture_pawnB,200);
   //texte = TTF_RenderText_Blended(police,"oui",couleurNoire);
   //SDL_BlitSurface(texte,NULL,image,&positionText);
 
@@ -583,7 +586,10 @@ int main(int argc, char ** argv)
   SDL_Rect dstrect_pawnV;
   SDL_Rect dstrect_pawnB;
   SDL_Rect dstrect_pawnK;
-  
+
+  SDL_Rect dstrect = { 0, 0, 850, 850 };
+  SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
   initPOI();
   
   synchro=0;
@@ -644,7 +650,7 @@ int main(int argc, char ** argv)
 	      break;
 	    case  SDL_MOUSEMOTION:
 	      SDL_GetMouseState( &mx, &my );
-	      indice=findPOI(mx,my);
+	      //indice=findPOI(mx,my);
 	      break;
 	    }
 	}
@@ -662,34 +668,34 @@ int main(int argc, char ** argv)
 	      break;
 	    case 'K':
 	      sscanf(gbuffer, "%c %d", &com, &ind_k);
-	      dstrect_pawnK.x = poi[ind_j].x;
-	      dstrect_pawnK.y = poi[ind_j].y;
-	      dstrect_pawnK.w = 87;
-	      dstrect_pawnK.h = 131;
+	      dstrect_pawnK.x = poi[ind_k].x-16;
+	      dstrect_pawnK.y = poi[ind_k].y-16;
+	      dstrect_pawnK.w = 20;
+	      dstrect_pawnK.h = 32;
 	      SDL_RenderCopy(renderer, texture_pawnK, NULL, &dstrect_pawnK);
 	      break;
 	    case 'J':
 	      sscanf(gbuffer, "%c %d", &com, &ind_j);
-	      dstrect_pawnJ.x = poi[ind_j].x;
-	      dstrect_pawnJ.y = poi[ind_j].y;
-	      dstrect_pawnJ.w = 87;
-	      dstrect_pawnJ.h = 131;
+	      dstrect_pawnJ.x = poi[ind_j].x-16;
+	      dstrect_pawnJ.y = poi[ind_j].y-16;
+	      dstrect_pawnJ.w = 20;
+	      dstrect_pawnJ.h = 32;
 	      SDL_RenderCopy(renderer, texture_pawnJ, NULL, &dstrect_pawnJ);
 	      break;
 	    case 'V':
 	      sscanf(gbuffer, "%c %d", &com, &ind_v);
-	      dstrect_pawnV.x = poi[ind_j].x;
-	      dstrect_pawnV.y = poi[ind_j].y;
-	      dstrect_pawnV.w = 87;
-	      dstrect_pawnV.h = 131;
+	      dstrect_pawnV.x = poi[ind_v].x-16;
+	      dstrect_pawnV.y = poi[ind_v].y-16;
+	      dstrect_pawnV.w = 20;
+	      dstrect_pawnV.h = 32;
 	      SDL_RenderCopy(renderer, texture_pawnV, NULL, &dstrect_pawnV);
 	      break;
 	    case 'B':
 	      sscanf(gbuffer, "%c %d", &com, &ind_b);
-	      dstrect_pawnB.x = poi[ind_j].x;
-	      dstrect_pawnB.y = poi[ind_j].y;
-	      dstrect_pawnB.w = 87;
-	      dstrect_pawnB.h = 131;
+	      dstrect_pawnB.x = poi[ind_b].x-16;
+	      dstrect_pawnB.y = poi[ind_b].y-16;
+	      dstrect_pawnB.w = 20;
+	      dstrect_pawnB.h = 32;
 	      SDL_RenderCopy(renderer, texture_pawnB, NULL, &dstrect_pawnB);
 	      break;
 	    case 'N':
@@ -701,11 +707,22 @@ int main(int argc, char ** argv)
 	      for (i = 0; i < nbindices; i++)
 		indices[i] = 0;
 	      nbindices = 0;
-	      dstrect_rond_M.x = poi[indice].x;
-	      dstrect_rond_M.y = poi[indice].y;
+
+	      dstrect_rond_M.x = poi[indice].x-16;
+	      dstrect_rond_M.y = poi[indice].y-16;
 	      dstrect_rond_M.w = 32;
 	      dstrect_rond_M.h = 32;
 	      SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M);
+	      /*
+	      if(indice == victimes[1] || indice == victimes[2] || indice == victimes[3] || indice == victimes[4])
+		{
+		  dstrect_rond_M.x = poi[indices[1]].x;
+		  dstrect_rond_M.y = poi[indice].y;
+		  dstrect_rond_M.w = 32;
+		  dstrect_rond_M.h = 32;
+		  SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M);
+		}
+	      */
 	      break;
 	    case 'S':
 	      sscanf(gbuffer, "%c %d", &com, &indices[nbindices]);
@@ -743,20 +760,20 @@ int main(int argc, char ** argv)
 	  pthread_mutex_unlock( &mutex );
 	}
       
-      SDL_Rect dstrect = { 0, 0, 850, 850 };
       //SDL_Rect srcrect_pawn = { 0, 0, 87, 131 };
       //SDL_Rect dstrect_pawn = { 100, 100, 87, 131 };
       //SDL_Rect dstrect_rond = { 300, 300, 200, 200 };
       
-      SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
       
       //SDL_RenderCopy(renderer, texture_pawn, NULL, &dstrect_pawn);
-      if (indice != -1)
+      /* if (indice != -1)
 	{
 	    SDL_Rect dstrect_rond = { poi[indice].x-16, poi[indice].y-16, 32, 32 };
 	  SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond);
 	}
-      
+      */
+     
       SDL_RenderPresent(renderer);
     }
   
