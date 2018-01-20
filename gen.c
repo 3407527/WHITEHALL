@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define TAILLE 448
+#define TAILLE 492
 
 int nb[534];
 
