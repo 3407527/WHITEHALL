@@ -568,7 +568,7 @@ int main(int argc, char ** argv)
   SDL_Surface * rond = IMG_Load("rond.png");
   SDL_SetColorKey( rond, SDL_TRUE, SDL_MapRGB( rond->format, 0, 0, 0 ) );
   SDL_Surface * rondj = IMG_Load("rond_j.png");
-  //SDL_SetColorKey( rondj, SDL_TRUE, SDL_MapRGB( rondj->format, 0, 0, 0 ) );
+  SDL_SetColorKey( rondj, SDL_TRUE, SDL_MapRGB( rondj->format, 0, 0, 0 ) );
   //SDL_Surface * rond = SDL_LoadBMP("rond.bmp");
   SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
   SDL_Texture * texture_pawnJ = SDL_CreateTextureFromSurface(renderer, pawnJ);
