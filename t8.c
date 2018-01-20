@@ -562,30 +562,40 @@ int main(int argc, char ** argv)
   SDL_SetColorKey( pawnV, SDL_TRUE, SDL_MapRGB( pawnV->format, 0, 0, 0 ) );
   SDL_Surface * pawnB = IMG_Load("pawnB.png");
   SDL_SetColorKey( pawnB, SDL_TRUE, SDL_MapRGB( pawnB->format, 0, 0, 0 ) );
+  SDL_Surface * pawnT = IMG_Load("pawnK.png");
+  SDL_SetColorKey( pawnT, SDL_TRUE, SDL_MapRGB( pawnT->format, 0, 0, 0 ) );
   //SDL_Surface * pawn = SDL_LoadBMP("pawn.bmp");
   SDL_Surface * rond = IMG_Load("rond.png");
   SDL_SetColorKey( rond, SDL_TRUE, SDL_MapRGB( rond->format, 0, 0, 0 ) );
+  SDL_Surface * rondj = IMG_Load("rond_j.png");
+  //SDL_SetColorKey( rondj, SDL_TRUE, SDL_MapRGB( rondj->format, 0, 0, 0 ) );
   //SDL_Surface * rond = SDL_LoadBMP("rond.bmp");
   SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
   SDL_Texture * texture_pawnJ = SDL_CreateTextureFromSurface(renderer, pawnJ);
   SDL_Texture * texture_pawnK = SDL_CreateTextureFromSurface(renderer, pawnK);
   SDL_Texture * texture_pawnV = SDL_CreateTextureFromSurface(renderer, pawnV);
   SDL_Texture * texture_pawnB = SDL_CreateTextureFromSurface(renderer, pawnB);
+  SDL_Texture * texture_pawnT = SDL_CreateTextureFromSurface(renderer, pawnT);
   SDL_Texture * texture_rond = SDL_CreateTextureFromSurface(renderer, rond);
+  SDL_Texture * texture_rondj = SDL_CreateTextureFromSurface(renderer, rondj);
   SDL_SetTextureAlphaMod(texture_rond,128);
+  SDL_SetTextureAlphaMod(texture_rondj,128);
   SDL_SetTextureAlphaMod(texture_pawnJ,200);
   SDL_SetTextureAlphaMod(texture_pawnK,200);
   SDL_SetTextureAlphaMod(texture_pawnV,200);
   SDL_SetTextureAlphaMod(texture_pawnB,200);
+  SDL_SetTextureAlphaMod(texture_pawnT,200);
   //texte = TTF_RenderText_Blended(police,"oui",couleurNoire);
   //SDL_BlitSurface(texte,NULL,image,&positionText);
 
 
   SDL_Rect dstrect_rond_M;
+  SDL_Rect dstrect_rond_S;
   SDL_Rect dstrect_pawnJ;
   SDL_Rect dstrect_pawnV;
   SDL_Rect dstrect_pawnB;
   SDL_Rect dstrect_pawnK;
+  SDL_Rect dstrect_pawnT;
 
   SDL_Rect dstrect = { 0, 0, 850, 850 };
   SDL_RenderCopy(renderer, texture, NULL, &dstrect);
@@ -668,35 +678,36 @@ int main(int argc, char ** argv)
 	      break;
 	    case 'K':
 	      sscanf(gbuffer, "%c %d", &com, &ind_k);
-	      dstrect_pawnK.x = poi[ind_k].x-16;
-	      dstrect_pawnK.y = poi[ind_k].y-16;
-	      dstrect_pawnK.w = 20;
-	      dstrect_pawnK.h = 32;
-	      SDL_RenderCopy(renderer, texture_pawnK, NULL, &dstrect_pawnK);
+	      /* dstrect_pawnK.x = poi[ind_k].x-16; */
+	      /* dstrect_pawnK.y = poi[ind_k].y-16; */
+	      /* dstrect_pawnK.w = 20; */
+	      /* dstrect_pawnK.h = 32; */
+	      /* SDL_RenderCopy(renderer, texture_pawnK, NULL, &dstrect_pawnK); */
 	      break;
 	    case 'J':
 	      sscanf(gbuffer, "%c %d", &com, &ind_j);
-	      dstrect_pawnJ.x = poi[ind_j].x-16;
-	      dstrect_pawnJ.y = poi[ind_j].y-16;
-	      dstrect_pawnJ.w = 20;
-	      dstrect_pawnJ.h = 32;
-	      SDL_RenderCopy(renderer, texture_pawnJ, NULL, &dstrect_pawnJ);
+	      /* dstrect_pawnJ.x = poi[ind_j].x-16; */
+	      /* dstrect_pawnJ.y = poi[ind_j].y-16; */
+	      /* dstrect_pawnJ.w = 20; */
+	      /* dstrect_pawnJ.h = 32; */
+	      /* SDL_RenderCopy(renderer, texture_pawnJ, NULL, &dstrect_pawnJ); */
 	      break;
 	    case 'V':
 	      sscanf(gbuffer, "%c %d", &com, &ind_v);
-	      dstrect_pawnV.x = poi[ind_v].x-16;
-	      dstrect_pawnV.y = poi[ind_v].y-16;
-	      dstrect_pawnV.w = 20;
-	      dstrect_pawnV.h = 32;
-	      SDL_RenderCopy(renderer, texture_pawnV, NULL, &dstrect_pawnV);
+	      
+	      /* dstrect_pawnV.x = poi[ind_v].x-16; */
+	      /* dstrect_pawnV.y = poi[ind_v].y-16; */
+	      /* dstrect_pawnV.w = 20; */
+	      /* dstrect_pawnV.h = 32; */
+	      /* SDL_RenderCopy(renderer, texture_pawnV, NULL, &dstrect_pawnV); */
 	      break;
 	    case 'B':
 	      sscanf(gbuffer, "%c %d", &com, &ind_b);
-	      dstrect_pawnB.x = poi[ind_b].x-16;
-	      dstrect_pawnB.y = poi[ind_b].y-16;
-	      dstrect_pawnB.w = 20;
-	      dstrect_pawnB.h = 32;
-	      SDL_RenderCopy(renderer, texture_pawnB, NULL, &dstrect_pawnB);
+	      /* dstrect_pawnB.x = poi[ind_b].x-16; */
+	      /* dstrect_pawnB.y = poi[ind_b].y-16; */
+	      /* dstrect_pawnB.w = 20; */
+	      /* dstrect_pawnB.h = 32; */
+	      /* SDL_RenderCopy(renderer, texture_pawnB, NULL, &dstrect_pawnB); */
 	      break;
 	    case 'N':
 	      sscanf(gbuffer, "%c %d", &com, &tour);
@@ -708,11 +719,11 @@ int main(int argc, char ** argv)
 		indices[i] = 0;
 	      nbindices = 0;
 
-	      dstrect_rond_M.x = poi[indice].x-16;
-	      dstrect_rond_M.y = poi[indice].y-16;
-	      dstrect_rond_M.w = 32;
-	      dstrect_rond_M.h = 32;
-	      SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M);
+	      /* dstrect_rond_M.x = poi[indice].x-16; */
+	      /* dstrect_rond_M.y = poi[indice].y-16; */
+	      /* dstrect_rond_M.w = 32; */
+	      /* dstrect_rond_M.h = 32; */
+	      /* SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M); */
 	      /*
 	      if(indice == victimes[1] || indice == victimes[2] || indice == victimes[3] || indice == victimes[4])
 		{
@@ -759,6 +770,64 @@ int main(int argc, char ** argv)
 	  synchro=0;
 	  pthread_mutex_unlock( &mutex );
 	}
+      // On réinitialise l'affichage, puis on ajoute au fur et à mesure
+      SDL_Rect dstrect = { 0, 0, 850, 850 };
+      SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+      // Jack
+      dstrect_pawnK.x = poi[ind_k].x-16;
+      dstrect_pawnK.y = poi[ind_k].y-16;
+      dstrect_pawnK.w = 20;
+      dstrect_pawnK.h = 32;
+      SDL_RenderCopy(renderer, texture_pawnK, NULL, &dstrect_pawnK);
+      
+      // Jaune
+      dstrect_pawnJ.x = poi[ind_j].x-16;
+      dstrect_pawnJ.y = poi[ind_j].y-16;
+      dstrect_pawnJ.w = 20;
+      dstrect_pawnJ.h = 32;
+      SDL_RenderCopy(renderer, texture_pawnJ, NULL, &dstrect_pawnJ);
+      
+      // Vert
+      dstrect_pawnV.x = poi[ind_v].x-16;
+      dstrect_pawnV.y = poi[ind_v].y-16;
+      dstrect_pawnV.w = 20;
+      dstrect_pawnV.h = 32;
+      SDL_RenderCopy(renderer, texture_pawnV, NULL, &dstrect_pawnV);
+
+      //Bleu
+      dstrect_pawnB.x = poi[ind_b].x-16;
+      dstrect_pawnB.y = poi[ind_b].y-16;
+      dstrect_pawnB.w = 20;
+      dstrect_pawnB.h = 32;
+      SDL_RenderCopy(renderer, texture_pawnB, NULL, &dstrect_pawnB);
+
+      // Pion tour
+      dstrect_pawnT.x = 120 + 40 * tour - 16;
+      dstrect_pawnT.y = 823-16;
+      dstrect_pawnT.w = 20;
+      dstrect_pawnT.h = 32;
+      SDL_RenderCopy(renderer, texture_pawnT, NULL, &dstrect_pawnT);
+
+      //Discovery Locations (assassinats)
+      for (i = 0; i < nbvictimes; i++){
+      	dstrect_rond_M.x = poi[victimes[i]].x-16;
+      	dstrect_rond_M.y = poi[victimes[i]].y-16;
+      	dstrect_rond_M.w = 32;
+      	dstrect_rond_M.h = 32;
+      	SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M);
+      }
+
+      //Indices
+      for (i = 0; i < nbindices; i++){
+      	dstrect_rond_S.x = poi[indices[i]].x-16;
+      	dstrect_rond_S.y = poi[indices[i]].y-16;
+      	dstrect_rond_S.w = 32;
+      	dstrect_rond_S.h = 32;
+      	SDL_RenderCopy(renderer, texture_rondj, NULL, &dstrect_rond_S);
+      }
+	
+	
       
       //SDL_Rect srcrect_pawn = { 0, 0, 87, 131 };
       //SDL_Rect dstrect_pawn = { 100, 100, 87, 131 };
