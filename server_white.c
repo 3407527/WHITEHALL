@@ -127,6 +127,8 @@ int mouvementAutorise_Jack(int indice){
   if (indice == ind_k)
     return 0;
   for (i = 0; i < 1576; i++){
+    if (map[i][0] > ind_k)
+      return 0;
     if ((map[i][0] == ind_k) && (map[i][1] == indice)){
       b = 1;
       test = 1;
@@ -138,7 +140,7 @@ int mouvementAutorise_Jack(int indice){
 	return 1;
     }
   }
-  if (test == 0) // le tableau a été parcouru sans succès
+  if (test == 0) // le tableau a été parcouru sans succès, ne se passe que si ind_k vaut 189
     return 0;
   else // l'indice est valide mais des policiers bloquent le chemin
     return -1;
@@ -154,7 +156,8 @@ int mouvementAutorise_Police_rec_j(int actuel, int destination, int mov){
   else if (mov >= 1){ // sinon, si on peut encore se déplacer
     pass[actuel] = 1;
     for (i = 1; i <= 7; i++){ // on regarde chaque liaison partant de l'indice actuel
-      next = pass[liaisons[actuel][i]];
+      next = liaisons[actuel][i];
+      printf("Je cherche en indice next = %d\n", next);
       if ((next > 0) && (pass[next] != 1)){ // si existante et qu'on est pas passé par là
 	if (next <= 189){ // si c'est un rond, on ne consomme pas de mouvement
 	  if (mouvementAutorise_Police_rec_j(next, destination, mov)){ // si la destination est atteinte
@@ -182,7 +185,7 @@ int mouvementAutorise_Police_rec_v(int actuel, int destination, int mov){
   else if (mov >= 1){
     pass[actuel] = 1;
     for (i = 1; i <= 7; i++){
-      next = pass[liaisons[actuel][i]];
+      next = liaisons[actuel][i];
       if ((next > 0) && (pass[next] != 1)){
 	if (next <= 189){
 	  if (mouvementAutorise_Police_rec_v(next, destination, mov)){
@@ -210,7 +213,7 @@ int mouvementAutorise_Police_rec_b(int actuel, int destination, int mov){
   else if (mov >= 1){
     pass[actuel] = 1;
     for (i = 1; i <= 7; i++){
-      next = pass[liaisons[actuel][i]];
+      next = liaisons[actuel][i];
       if ((next > 0) && (pass[next] != 1)){
 	if (next <= 189){
 	  if (mouvementAutorise_Police_rec_b(next, destination, mov)){
@@ -440,7 +443,7 @@ int main(int argc, char *argv[])
 	  if(fsmServer == 6)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
-	      if (mouvementAutorise_Jack(indice)){
+	      if (mouvementAutorise_Jack(indice) > 0){
 		ind_k = indice;
 		feuille_route_jack[nbTour] = ind_k;
 		sprintf(reply,"K %d",ind_k);

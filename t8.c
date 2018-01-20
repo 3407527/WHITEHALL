@@ -678,36 +678,15 @@ int main(int argc, char ** argv)
 	      break;
 	    case 'K':
 	      sscanf(gbuffer, "%c %d", &com, &ind_k);
-	      /* dstrect_pawnK.x = poi[ind_k].x-16; */
-	      /* dstrect_pawnK.y = poi[ind_k].y-16; */
-	      /* dstrect_pawnK.w = 20; */
-	      /* dstrect_pawnK.h = 32; */
-	      /* SDL_RenderCopy(renderer, texture_pawnK, NULL, &dstrect_pawnK); */
 	      break;
 	    case 'J':
 	      sscanf(gbuffer, "%c %d", &com, &ind_j);
-	      /* dstrect_pawnJ.x = poi[ind_j].x-16; */
-	      /* dstrect_pawnJ.y = poi[ind_j].y-16; */
-	      /* dstrect_pawnJ.w = 20; */
-	      /* dstrect_pawnJ.h = 32; */
-	      /* SDL_RenderCopy(renderer, texture_pawnJ, NULL, &dstrect_pawnJ); */
 	      break;
 	    case 'V':
 	      sscanf(gbuffer, "%c %d", &com, &ind_v);
-	      
-	      /* dstrect_pawnV.x = poi[ind_v].x-16; */
-	      /* dstrect_pawnV.y = poi[ind_v].y-16; */
-	      /* dstrect_pawnV.w = 20; */
-	      /* dstrect_pawnV.h = 32; */
-	      /* SDL_RenderCopy(renderer, texture_pawnV, NULL, &dstrect_pawnV); */
 	      break;
 	    case 'B':
 	      sscanf(gbuffer, "%c %d", &com, &ind_b);
-	      /* dstrect_pawnB.x = poi[ind_b].x-16; */
-	      /* dstrect_pawnB.y = poi[ind_b].y-16; */
-	      /* dstrect_pawnB.w = 20; */
-	      /* dstrect_pawnB.h = 32; */
-	      /* SDL_RenderCopy(renderer, texture_pawnB, NULL, &dstrect_pawnB); */
 	      break;
 	    case 'N':
 	      sscanf(gbuffer, "%c %d", &com, &tour);
@@ -718,22 +697,6 @@ int main(int argc, char ** argv)
 	      for (i = 0; i < nbindices; i++)
 		indices[i] = 0;
 	      nbindices = 0;
-
-	      /* dstrect_rond_M.x = poi[indice].x-16; */
-	      /* dstrect_rond_M.y = poi[indice].y-16; */
-	      /* dstrect_rond_M.w = 32; */
-	      /* dstrect_rond_M.h = 32; */
-	      /* SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M); */
-	      /*
-	      if(indice == victimes[1] || indice == victimes[2] || indice == victimes[3] || indice == victimes[4])
-		{
-		  dstrect_rond_M.x = poi[indices[1]].x;
-		  dstrect_rond_M.y = poi[indice].y;
-		  dstrect_rond_M.w = 32;
-		  dstrect_rond_M.h = 32;
-		  SDL_RenderCopy(renderer, texture_rond, NULL, &dstrect_rond_M);
-		}
-	      */
 	      break;
 	    case 'S':
 	      sscanf(gbuffer, "%c %d", &com, &indices[nbindices]);
