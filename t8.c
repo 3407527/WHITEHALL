@@ -23,7 +23,7 @@ char couleur;
 int ind_k = -1;
 int ind_j = -1;
 int ind_v = -1;
-int ind_b = -1;
+int ind_b = -1; 
 struct _poi
 {
   int x;
@@ -38,6 +38,8 @@ int nbvictimes;
 int victimes[4];
 int nbindices;
 int indices[45];
+int nbcibles;
+int cibles[4];
 
 
 void initPOI()
@@ -569,6 +571,8 @@ int main(int argc, char ** argv)
   SDL_SetColorKey( rond, SDL_TRUE, SDL_MapRGB( rond->format, 0, 0, 0 ) );
   SDL_Surface * rondj = IMG_Load("rond_j.png");
   SDL_SetColorKey( rondj, SDL_TRUE, SDL_MapRGB( rondj->format, 0, 0, 0 ) );
+  SDL_Surface * cross = IMG_Load("cross.png");
+  SDL_SetColorKey( cross, SDL_TRUE, SDL_MapRGB( cross->format, 0, 0, 0 ) );
   //SDL_Surface * rond = SDL_LoadBMP("rond.bmp");
   SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
   SDL_Texture * texture_pawnJ = SDL_CreateTextureFromSurface(renderer, pawnJ);
@@ -578,8 +582,11 @@ int main(int argc, char ** argv)
   SDL_Texture * texture_pawnT = SDL_CreateTextureFromSurface(renderer, pawnT);
   SDL_Texture * texture_rond = SDL_CreateTextureFromSurface(renderer, rond);
   SDL_Texture * texture_rondj = SDL_CreateTextureFromSurface(renderer, rondj);
+  SDL_Texture * texture_cross = SDL_CreateTextureFromSurface(renderer, cross);
+
   SDL_SetTextureAlphaMod(texture_rond,128);
   SDL_SetTextureAlphaMod(texture_rondj,128);
+  SDL_SetTextureAlphaMod(texture_cross,200);
   SDL_SetTextureAlphaMod(texture_pawnJ,200);
   SDL_SetTextureAlphaMod(texture_pawnK,200);
   SDL_SetTextureAlphaMod(texture_pawnV,200);
@@ -587,10 +594,10 @@ int main(int argc, char ** argv)
   SDL_SetTextureAlphaMod(texture_pawnT,200);
   //texte = TTF_RenderText_Blended(police,"oui",couleurNoire);
   //SDL_BlitSurface(texte,NULL,image,&positionText);
-  SDL_Surface *sshot;
 
   SDL_Rect dstrect_rond_M;
   SDL_Rect dstrect_rond_S;
+  SDL_Rect dstrect_cross;
   SDL_Rect dstrect_pawnJ;
   SDL_Rect dstrect_pawnV;
   SDL_Rect dstrect_pawnB;
@@ -702,6 +709,10 @@ int main(int argc, char ** argv)
 	      sscanf(gbuffer, "%c %d", &com, &indices[nbindices]);
 	      nbindices++;
 	      break;
+	    case 'X':
+	      sscanf(gbuffer, "%c %d", &com, &cibles[nbcibles]);
+	      nbcibles++;
+	      break;
 	    case 'I':
 	      sscanf(gbuffer,"%c %d",&com, &gId);
 	      // printf("COM=%c id=%d\n",com,gId);
@@ -788,6 +799,16 @@ int main(int argc, char ** argv)
       	dstrect_rond_S.w = 32;
       	dstrect_rond_S.h = 32;
       	SDL_RenderCopy(renderer, texture_rondj, NULL, &dstrect_rond_S);
+      }
+
+      //Cibles
+      for (i = 0; i < nbcibles; i++){
+	
+	dstrect_cross.x = poi[cibles[i]].x-16;
+      	dstrect_cross.y = poi[cibles[i]].y-16;
+      	dstrect_cross.w = 32;
+      	dstrect_cross.h = 32;
+      	SDL_RenderCopy(renderer, texture_cross, NULL, &dstrect_cross);
       }
 	
 	

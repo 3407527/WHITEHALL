@@ -254,7 +254,6 @@ int traceJack(int indice){
 }
 
 void fin_de_tour(){
-  printf("On rentre dans la fonction de fin du tour\n");
   int i;
   char reply[256];
   if (est_present(ptKill, ind_k, 4)){ // si meurtre
@@ -406,6 +405,8 @@ int main(int argc, char *argv[])
 	      printf("%d %d\n", quartiers[indice], cibles_quartier[quartiers[indice] - 1]);
 	      if ((indice <= 189) && (quartiers[indice] != 5) && (cibles_quartier[quartiers[indice] - 1] == 0)){
 		  ptKill[nbPts++] = indice;
+		  sprintf(reply, "X %d", indice);
+		  sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port, reply);
 		  cibles_quartier[quartiers[indice] - 1] = 1;
 		  printf("%d %d %d %d\n", ptKill[0], ptKill[1], ptKill[2], ptKill[3]);
 		}
