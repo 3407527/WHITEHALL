@@ -155,9 +155,8 @@ int mouvementAutorise_Police_rec_j(int actuel, int destination, int mov){
     return 1;
   else if (mov >= 1){ // sinon, si on peut encore se déplacer
     pass[actuel] = 1;
-    for (i = 1; i <= 7; i++){ // on regarde chaque liaison partant de l'indice actuel
+    for (i = 1; i < 7; i++){ // on regarde chaque liaison partant de l'indice actuel
       next = liaisons[actuel][i];
-      printf("Je cherche en indice next = %d\n", next);
       if ((next > 0) && (pass[next] != 1)){ // si existante et qu'on est pas passé par là
 	if (next <= 189){ // si c'est un rond, on ne consomme pas de mouvement
 	  if (mouvementAutorise_Police_rec_j(next, destination, mov)){ // si la destination est atteinte
@@ -184,7 +183,7 @@ int mouvementAutorise_Police_rec_v(int actuel, int destination, int mov){
     return 1;
   else if (mov >= 1){
     pass[actuel] = 1;
-    for (i = 1; i <= 7; i++){
+    for (i = 1; i < 7; i++){
       next = liaisons[actuel][i];
       if ((next > 0) && (pass[next] != 1)){
 	if (next <= 189){
@@ -212,7 +211,7 @@ int mouvementAutorise_Police_rec_b(int actuel, int destination, int mov){
     return 1;
   else if (mov >= 1){
     pass[actuel] = 1;
-    for (i = 1; i <= 7; i++){
+    for (i = 1; i < 7; i++){
       next = liaisons[actuel][i];
       if ((next > 0) && (pass[next] != 1)){
 	if (next <= 189){
@@ -235,7 +234,7 @@ int mouvementAutorise_Police_rec_b(int actuel, int destination, int mov){
 }
 		  
 int mouvementAutorise_Police(int destination, int joueur){
-  if (destination < 200)
+  if (destination <= 200)
     return 0;
   if (joueur == 1)
     return mouvementAutorise_Police_rec_j(ind_j,destination, 2);
@@ -255,6 +254,7 @@ int traceJack(int indice){
 }
 
 void fin_de_tour(){
+  printf("On rentre dans la fonction de fin du tour\n");
   int i;
   char reply[256];
   if (est_present(ptKill, ind_k, 4)){ // si meurtre
@@ -466,9 +466,7 @@ int main(int argc, char *argv[])
 		broadcastMessage(reply);
 		broadcastMessage("T Le policier Vert choisit son point de départ");
 		//sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"T messageprisencompte\n");
-		printf("COUCOU JE SUIS LA\n");
 		fsmServer = 3;
-		printf("ET LA AUSSI\n");
 	      }
 	      else
 		sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
@@ -683,7 +681,7 @@ int main(int argc, char *argv[])
 	      vbt = tmp_alloc;
 	      lb = 0;
 	      for (i = 1; i <= 7; i++) // on crée les tableaux associés
-		if ((liaisons[ind_b][i] <= 189) && (liaisons[ind_j][i] >= 1)){ 
+		if ((liaisons[ind_b][i] <= 189) && (liaisons[ind_b][i] >= 1)){
 		  vb[lb] = liaisons[ind_b][i];
 		  vbt[lb] = 0;
 		  lb++;

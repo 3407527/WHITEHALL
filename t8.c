@@ -587,7 +587,7 @@ int main(int argc, char ** argv)
   SDL_SetTextureAlphaMod(texture_pawnT,200);
   //texte = TTF_RenderText_Blended(police,"oui",couleurNoire);
   //SDL_BlitSurface(texte,NULL,image,&positionText);
-
+  SDL_Surface *sshot;
 
   SDL_Rect dstrect_rond_M;
   SDL_Rect dstrect_rond_S;
