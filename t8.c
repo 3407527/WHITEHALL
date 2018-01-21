@@ -40,7 +40,10 @@ int nbindices;
 int indices[45];
 int nbcibles;
 int cibles[4];
-
+char texte[50];
+char phase[50];
+char erreur[50];
+int err;
 
 void initPOI()
 {
@@ -540,8 +543,8 @@ int main(int argc, char ** argv)
   
   
   SDL_Init(SDL_INIT_VIDEO);
+  TTF_Init();
 
-  //TTF_Init();
   //TTF_Font *police = NULL;
   //SDL_Surface *texte = NULL; 
   // SDL_Color couleurNoire = {0,0,0};
@@ -604,8 +607,29 @@ int main(int argc, char ** argv)
   SDL_Rect dstrect_pawnK;
   SDL_Rect dstrect_pawnT;
 
-  SDL_Rect dstrect = { 0, 0, 850, 850 };
+  SDL_Rect dstrect = { 0, 0, 850, 850 };  
   SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+  TTF_Font* Sans;
+  Sans = TTF_OpenFont("/home/user/Desktop/WHITEHALL/WHITEHALL/KIN668.ttf", 16); //this opens a font style and sets a size
+  if(!Sans) {
+    printf("TTF_OpenFont: %s\n", TTF_GetError());
+    return 0;
+   // handle error
+}
+
+  SDL_Color Red = {255,0,0};
+  SDL_Color Yellow = {255,255,0};
+  SDL_Color Green = {0,255,0};
+  SDL_Color Blue = {0, 0, 255};
+  SDL_Color Color;
+  
+  SDL_Surface* surfaceMessage;
+  SDL_Texture* Message; //now you can convert it into a texture
+  SDL_Rect Message_rect; //create a rect
+
+
+  
 
   initPOI();
   
@@ -656,6 +680,7 @@ int main(int argc, char ** argv)
 	      else
 		{
 		  indice=findPOI(mx,my);
+		  err = 0;
 		  if (indice != -1){
 		    sprintf(mess, "%c %d", joueur, indice);
 		    printf("mess vers server=%s\n",mess);
@@ -720,23 +745,34 @@ int main(int argc, char ** argv)
 		{
 		case 0 :
 		  joueur = 'K';
+		  strcpy(texte, "Vous etes Jack");
+		  Color = Red;
 		  break;
 		case 1 :
 		  joueur = 'J';
+		  strcpy(texte, "Vous etes Jaune");
+		  Color = Yellow;
 		  break;
 		case 2 :
 		  joueur = 'V';
+		  strcpy(texte, "Vous etes Vert");
+		  Color = Green;
 		  break;
 		case 3 :
 		  joueur = 'B';
+		  strcpy(texte, "Vous etes Bleu");
+		  Color = Blue;
 		  break;
 		}
 	      break;
 	    case 'T':
 	      sscanf(gbuffer,"%c %s",&com, mess);
+	      strcpy(phase, gbuffer + 2);
 	      //printf("COM=%c mess=%s\n",com,mess);
 	      break;
 	    case 'E':
+	      strcpy(erreur, gbuffer + 2);
+	      err = 1;
 	      break;
 	    default:
 	      break;
@@ -810,7 +846,39 @@ int main(int argc, char ** argv)
       	dstrect_cross.h = 32;
       	SDL_RenderCopy(renderer, texture_cross, NULL, &dstrect_cross);
       }
-	
+
+      /* // Texte joueur */
+      /* surfaceMessage = TTF_RenderText_Solid(Sans, texte, Color);  */
+      /* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
+      /* Message_rect.x = 650;  */
+      /* Message_rect.y = 0;  */
+      /* Message_rect.w = 200;  */
+      /* Message_rect.h = 30;  */
+      /* SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
+      /* SDL_FreeSurface(surfaceMessage); */
+
+      /* // Texte Phase */
+      /* surfaceMessage = TTF_RenderText_Solid(Sans, phase, Green);  */
+      /* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
+      /* Message_rect.x = 0; */
+      /* Message_rect.y = 0; */
+      /* Message_rect.w = 500; */
+      /* Message_rect.h = 30; */
+      /* SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
+      /* SDL_FreeSurface(surfaceMessage); */
+
+      /* // Texxte Erreur */
+      /* if (err){ */
+      /* 	surfaceMessage = TTF_RenderText_Solid(Sans, erreur, Red);  */
+      /* 	Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
+      /* 	Message_rect.x = 0; */
+      /* 	Message_rect.y = 30; */
+      /* 	Message_rect.w = 500; */
+      /* 	Message_rect.h = 30;  */
+      /* 	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
+      /* 	SDL_FreeSurface(surfaceMessage); */
+      /* } */
+      
 	
       
       //SDL_Rect srcrect_pawn = { 0, 0, 87, 131 };
@@ -834,7 +902,6 @@ int main(int argc, char ** argv)
   SDL_FreeSurface(image);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-
   TTF_Quit();
   SDL_Quit();
   

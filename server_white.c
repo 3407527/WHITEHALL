@@ -140,7 +140,7 @@ int mouvementAutorise_Jack(int indice){
 	return 1;
     }
   }
-  if (test == 0) // le tableau a été parcouru sans succès, ne se passe que si ind_k vaut 189
+  if (test == 0) // le tableau a ete parcouru sans succès, ne se passe que si ind_k vaut 189
     return 0;
   else // l'indice est valide mais des policiers bloquent le chemin
     return -1;
@@ -153,7 +153,7 @@ int mouvementAutorise_Police_rec_j(int actuel, int destination, int mov){
   int i, next;
   if ((actuel == destination) && (actuel != ind_v) && (actuel != ind_b)) // si on est arrivé et pas d'autre policier sur la case
     return 1;
-  else if (mov >= 1){ // sinon, si on peut encore se déplacer
+  else if (mov >= 1){ // sinon, si on peut encore se deplacer
     pass[actuel] = 1;
     for (i = 1; i < 7; i++){ // on regarde chaque liaison partant de l'indice actuel
       next = liaisons[actuel][i];
@@ -261,7 +261,7 @@ void fin_de_tour(){
     broadcastMessage(reply);
     cibles_restantes--;
     if(cibles_restantes == 0){ // si dernière cible
-      broadcastMessage("T Jack a gagné! Fin de la partie!");
+      broadcastMessage("T Jack a gagne! Fin de la partie!");
       fsmServer=19;
     }
     else { // sinon on commence un nouveau round
@@ -270,20 +270,20 @@ void fin_de_tour(){
       feuille_route_jack[0] = ind_k;
       for (i = 1; i < 17; i++)
 	feuille_route_jack[i] = 0;
-      broadcastMessage("T Jack se déplace.");
+      broadcastMessage("T Jack se deplace.");
       fsmServer= 6;
     }
   }
   else{ // si pas de meurtre
     if (nbTour == 15){ // si dernier tour
-      broadcastMessage("T Jack n'a pas éliminé une cible à temps! Les policiers ont gagné!");
+      broadcastMessage("T Jack n'a pas elimine une cible a temps! Les policiers ont gagne!");
       fsmServer = 19;
     }
     else { // sinon on continue normalement
       nbTour++;
       sprintf(reply, "N %d", nbTour);
       broadcastMessage(reply);
-      broadcastMessage("T Jack se déplace.");
+      broadcastMessage("T Jack se deplace.");
       fsmServer = 6;
     }
   }
@@ -411,10 +411,10 @@ int main(int argc, char *argv[])
 		  printf("%d %d %d %d\n", ptKill[0], ptKill[1], ptKill[2], ptKill[3]);
 		}
 	      else
-		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez séléctionner une clible valide.");
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez selectionner une clible valide.");
 	      //sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"T messageprisencompte\n");
 	      if(nbPts == 4) {
-		broadcastMessage("T Le policier Jaune choisit son point de départ");
+		broadcastMessage("T Le policier Jaune choisit son point de depart");
 		fsmServer = 2;
 	      }
 	    }
@@ -426,7 +426,6 @@ int main(int argc, char *argv[])
 	      if ((indice <= 190) && ((indice == ptKill[0]) || (indice == ptKill[1]) || (indice == ptKill[2]) || (indice == ptKill[3]))){
 		ind_k = indice;
 		feuille_route_jack[0] = ind_k;
-		//sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"T Pointdedépartvalide");
 		sprintf(reply,"M %d",ind_k);
 		broadcastMessage(reply);
 		sprintf(reply,"K %d",ind_k);
@@ -434,14 +433,14 @@ int main(int argc, char *argv[])
 		cibles_restantes = 3;
 		broadcastMessage("N 1");
 		nbTour++;
-		broadcastMessage("T Jack se déplace.");
+		broadcastMessage("T Jack se deplace.");
 		fsmServer = 6;
 	      }
 	      else
-		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez séléctionner une des cibles.");
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez selectionner une des cibles.");
 	    }
-	  //fsmServer = 6 : Déplacement de Jack : Escape in the Night
-	  if(fsmServer == 6)
+	  //fsmServer = 6 : Deplacement de Jack : Escape in the Night
+	  else if(fsmServer == 6)
 	    {
 	      sscanf(buffer, "%c %d", &tmp, &indice);
 	      if (mouvementAutorise_Jack(indice) > 0){
@@ -449,11 +448,11 @@ int main(int argc, char *argv[])
 		feuille_route_jack[nbTour] = ind_k;
 		sprintf(reply,"K %d",ind_k);
 		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port, reply);
-		broadcastMessage("T Le policier Jaune se déplace.");
+		broadcastMessage("T Le policier Jaune se deplace.");
 		fsmServer = 7;
 	      }
 	      else
-		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez séléctionner une case valide.");
+		sendMessageToClient(tcpClients[0].ipAddress, tcpClients[0].port,"E Veuillez selectionner une case valide.");
 	    }
 	  break;
 	case 'J':
@@ -465,12 +464,12 @@ int main(int argc, char *argv[])
 		ind_j = indice;
 		sprintf(reply,"J %d",ind_j);
 		broadcastMessage(reply);
-		broadcastMessage("T Le policier Vert choisit son point de départ");
+		broadcastMessage("T Le policier Vert choisit son point de depart");
 		//sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"T messageprisencompte\n");
 		fsmServer = 3;
 	      }
 	      else
-		sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
+		sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Non valide : Veuillez selectionner l'un des carres jaunes.");
 	    }
 	  //fsmServer = 7 : Deplacement du policier Jaune : Hunting the Monster
 	  if (fsmServer == 7){
@@ -495,11 +494,11 @@ int main(int argc, char *argv[])
 		  vjt[lj] = 0;
 		  lj++;
 		}	      
-	      broadcastMessage("T Le policier Vert se déplace.");
+	      broadcastMessage("T Le policier Vert se deplace.");
 	      fsmServer = 8;
 	    }
 	    else
-	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 11 : Jaune recherche des indices
 	  if (fsmServer == 11){
@@ -509,7 +508,7 @@ int main(int argc, char *argv[])
 	      if (trace){
 		sprintf(reply, "S %d", trace);
 		broadcastMessage(reply);
-		broadcastMessage("Le policier Vert choisit une action à effectuer");
+		broadcastMessage("Le policier Vert choisit une action a effectuer");
 		fsmServer = 13;
 	      }
 	      // A COMPLETER : Si pas de trace alors...
@@ -518,20 +517,20 @@ int main(int argc, char *argv[])
 		  if (vj[i] == indice){
 		    break;
 		  }
-		if (vjt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
-		  sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Cette case a déjà été vérifiée.");
-		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		if (vjt[i] == 1) // Si cet indice a déja ete testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Cette case a deja ete vérifiee.");
+		else{ // sinon, on marque qu'il a ete testé et on vérifie si tous les voisins ont ete verifiés sans succès pour passer au tour suivant
 		  vjt[i] = 1;
 		  nbtj++;
 		  if (nbtj == lj){
-		    broadcastMessage("Le policier Vert choisit une action à effectuer");
+		    broadcastMessage("Le policier Vert choisit une action a effectuer");
 		    fsmServer = 13;
 		  }
 		}
 	      }		
 	    }
 	    else
-	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 12 : Jaune effectue une arrestation
 	  if (fsmServer == 12){
@@ -540,17 +539,17 @@ int main(int argc, char *argv[])
 	      if (indice != ind_k){
 		sprintf(reply, "T Jack n'est pas en %d.", indice);
 		broadcastMessage(reply);
-		broadcastMessage("T Le policier Vert choisit une action à effectuer.");
+		broadcastMessage("T Le policier Vert choisit une action a effectuer.");
 		fsmServer = 13;
 		  }
 	      else{
-		sprintf(reply, "T Jack a été arrêté par le policier Jaune en %d! Fin de la partie !", indice);
+		sprintf(reply, "T Jack a ete arrêté par le policier Jaune en %d! Fin de la partie !", indice);
 		broadcastMessage(reply);
 		fsmServer = 19;
 	      }
 	    }
 	    else
-	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez selectionner une case valide.");
 	  } 
 	  break;
 	case 'V':
@@ -566,7 +565,7 @@ int main(int argc, char *argv[])
 		fsmServer = 4;
 	      }
 	      else
-		sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
+		sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Non valide : Veuillez selectionner l'un des carres jaunes.");
 	    }
 	  //fsmServer = 8 : Deplacement du policier Vert : Hunting the Monster
 	  if (fsmServer == 8){
@@ -591,11 +590,11 @@ int main(int argc, char *argv[])
 		  vvt[lv] = 0;
 		  lv++;
 		}
-	      broadcastMessage("T Le policier Bleu se déplace.");
+	      broadcastMessage("T Le policier Bleu se deplace.");
 	      fsmServer = 9;
 	    }
 	    else
-	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 14 : Vert recherche des indices
 	  if (fsmServer == 14){
@@ -614,9 +613,9 @@ int main(int argc, char *argv[])
 		  if (vv[i] == indice){
 		    break;
 		  }
-		if (vvt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
-		  sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Cette case a déjà été vérifiée.");
-		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		if (vvt[i] == 1) // Si cet indice a déja ete testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Cette case a deja ete vérifiée.");
+		else{ // sinon, on marque qu'il a ete testé et on vérifie si tous les voisins ont ete verifiés sans succès pour passer au tour suivant
 		  vvt[i] = 1;
 		  nbtv++;
 		  if (nbtv == lv){
@@ -627,7 +626,7 @@ int main(int argc, char *argv[])
 	      }		
 	    }
 	    else
-	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 15 : Vert effectue une arrestation
 	  if (fsmServer == 15){
@@ -636,17 +635,17 @@ int main(int argc, char *argv[])
 	      if (indice != ind_k){
 		sprintf(reply, "T Jack n'est pas en %d.", indice);
 		broadcastMessage(reply);
-		broadcastMessage("T Le policier Bleu choisit une action à effectuer.");
+		broadcastMessage("T Le policier Bleu choisit une action a effectuer.");
 		fsmServer = 16;
 		  }
 	      else{
-		sprintf(reply, "T Jack a été arrêté par le policier Vert en %d! Fin de la partie !", indice);
+		sprintf(reply, "T Jack a ete arrête par le policier Vert en %d! Fin de la partie !", indice);
 		broadcastMessage(reply);
 		fsmServer = 19;
 	      }
 	    }
 	    else
-	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[2].ipAddress, tcpClients[2].port,"E Veuillez selectionner une case valide.");
 	  } 
 	  break;
 	case 'B':
@@ -658,11 +657,11 @@ int main(int argc, char *argv[])
 		ind_b = indice;
 		sprintf(reply,"B %d",ind_b);
 		broadcastMessage(reply);
-		broadcastMessage("T Jack choisit son point de départ");	      
+		broadcastMessage("T Jack choisit son point de depart");	      
 		fsmServer = 5;
 	      }
 	      else
-		sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Non valide : Veuillez séléctionner l'un des carrés jaunes.");
+		sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Non valide : Veuillez selectionner l'un des carrés jaunes.");
 	    }
 	  //fsmServer = 9 : Deplacement du policier Bleu : Hunting the Monster
 	  if (fsmServer == 9){
@@ -691,7 +690,7 @@ int main(int argc, char *argv[])
 	      fsmServer = 10;
 	    }
 	    else
-	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 17 : Bleu recherche des indices
 	  if (fsmServer == 17){
@@ -709,9 +708,9 @@ int main(int argc, char *argv[])
 		  if (vb[i] == indice){
 		    break;
 		  }
-		if (vbt[i] == 1) // Si cet indice a déja été testé, on envoie une erreur
-		  sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Cette case a déjà été vérifiée.");
-		else{ // sinon, on marque qu'il a été testé et on vérifie si tous les voisins ont été verifiés sans succès pour passer au tour suivant
+		if (vbt[i] == 1) // Si cet indice a déja ete testé, on envoie une erreur
+		  sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Cette case a deja ete vérifiée.");
+		else{ // sinon, on marque qu'il a ete testé et on vérifie si tous les voisins ont ete verifiés sans succès pour passer au tour suivant
 		  vbt[i] = 1;
 		  nbtb++;
 		  if (nbtb == lb){
@@ -721,7 +720,7 @@ int main(int argc, char *argv[])
 	      }		
 	    }
 	    else
-	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[1].ipAddress, tcpClients[1].port,"E Veuillez selectionner une case valide.");
 	  }
 	  //fsmServer = 18 : Bleu effectue une arrestation
 	  if (fsmServer == 18){
@@ -735,7 +734,7 @@ int main(int argc, char *argv[])
 		  broadcastMessage(reply);
 		  cibles_restantes--;
 		  if(cibles_restantes == 0){ // si dernière cible
-		    broadcastMessage("T Jack a gagné! Fin de la partie!");
+		    broadcastMessage("T Jack a gagne! Fin de la partie!");
 		    fsmServer=19;
 		  }
 		  else { // sinon on commence un nouveau round
@@ -744,32 +743,32 @@ int main(int argc, char *argv[])
 		    feuille_route_jack[0] = ind_k;
 		    for (i = 1; i < 17; i++)
 		      feuille_route_jack[i] = 0;
-		    broadcastMessage("T Jack se déplace.");
+		    broadcastMessage("T Jack se deplace.");
 		    fsmServer= 6;
 		  }
 		}
 		else{ // si pas de meurtre
 		  if (nbTour == 15){ // si dernier tour
-		    broadcastMessage("T Jack n'a pas éliminé une cible à temps! Les policiers ont gagné!");
+		    broadcastMessage("T Jack n'a pas élimine une cible à temps! Les policiers ont gagne!");
 		    fsmServer = 19;
 		  }
 		  else { // sinon on continue normalement
 		    nbTour++;
 		    sprintf(reply, "N %d", nbTour);
 		    broadcastMessage(reply);
-		    broadcastMessage("T Jack se déplace.");
+		    broadcastMessage("T Jack se deplace.");
 		    fsmServer = 6;
 		  }
 		}	    
 	      }
 	      else{ // sinon Jack est arrêté
-		sprintf(reply, "T Jack a été arrêté par le policier Bleu en %d! Fin de la partie !", indice);
+		sprintf(reply, "T Jack a ete arrêté par le policier Bleu en %d! Fin de la partie !", indice);
 		broadcastMessage(reply);
 		fsmServer = 19;
 	      }
 	    }
 	    else // sinon la case n'est pas valide
-	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez séléctionner une case valide.");
+	      sendMessageToClient(tcpClients[3].ipAddress, tcpClients[3].port,"E Veuillez selectionner une case valide.");
 	  }
 	  break;
 	case 'L':
