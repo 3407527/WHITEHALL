@@ -847,37 +847,40 @@ int main(int argc, char ** argv)
       	SDL_RenderCopy(renderer, texture_cross, NULL, &dstrect_cross);
       }
 
-      /* // Texte joueur */
-      /* surfaceMessage = TTF_RenderText_Solid(Sans, texte, Color);  */
-      /* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
-      /* Message_rect.x = 650;  */
-      /* Message_rect.y = 0;  */
-      /* Message_rect.w = 200;  */
-      /* Message_rect.h = 30;  */
-      /* SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
-      /* SDL_FreeSurface(surfaceMessage); */
+      // Texte joueur
+      surfaceMessage = TTF_RenderText_Solid(Sans, texte, Color);
+      Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+      Message_rect.x = 650;
+      Message_rect.y = 0;
+      Message_rect.w = 200;
+      Message_rect.h = 30;
+      SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+      SDL_DestroyTexture(Message);
+      SDL_FreeSurface(surfaceMessage);
 
-      /* // Texte Phase */
-      /* surfaceMessage = TTF_RenderText_Solid(Sans, phase, Green);  */
-      /* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
-      /* Message_rect.x = 0; */
-      /* Message_rect.y = 0; */
-      /* Message_rect.w = 500; */
-      /* Message_rect.h = 30; */
-      /* SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
-      /* SDL_FreeSurface(surfaceMessage); */
+      // Texte Phase
+      surfaceMessage = TTF_RenderText_Solid(Sans, phase, Green);
+      Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+      Message_rect.x = 0;
+      Message_rect.y = 0;
+      Message_rect.w = 500;
+      Message_rect.h = 30;
+      SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+      SDL_DestroyTexture(Message);
+      SDL_FreeSurface(surfaceMessage);
 
-      /* // Texxte Erreur */
-      /* if (err){ */
-      /* 	surfaceMessage = TTF_RenderText_Solid(Sans, erreur, Red);  */
-      /* 	Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); */
-      /* 	Message_rect.x = 0; */
-      /* 	Message_rect.y = 30; */
-      /* 	Message_rect.w = 500; */
-      /* 	Message_rect.h = 30;  */
-      /* 	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); */
-      /* 	SDL_FreeSurface(surfaceMessage); */
-      /* } */
+      // Texxte Erreur
+      if (err){
+      	surfaceMessage = TTF_RenderText_Solid(Sans, erreur, Red);
+      	Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+      	Message_rect.x = 0;
+      	Message_rect.y = 30;
+      	Message_rect.w = 500;
+      	Message_rect.h = 30;
+      	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+	SDL_DestroyTexture(Message);
+      	SDL_FreeSurface(surfaceMessage);
+      }
       
 	
       
